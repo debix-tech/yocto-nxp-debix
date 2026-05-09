@@ -1,0 +1,30 @@
+From 0d35cf96a6fd3dab67cfb7929d76b0559782c63f Mon Sep 17 00:00:00 2001
+From: Haoran Wang <elven.wang@nxp.com>
+Date: Fri, 11 Jul 2025 09:44:11 +0800
+Subject: [PATCH] Enable system_site_packages option in pw_build
+
+Yocto Python toolchain don't have ensurepip so it cannot help to make
+pip install packages after the venv created.
+
+Upstream-Status: Inappropriate  [platform specific changes]
+Signed-off-by: Haoran Wang <elven.wang@nxp.com>
+---
+ pw_build/py/pw_build/create_gn_venv.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/pw_build/py/pw_build/create_gn_venv.py b/pw_build/py/pw_build/create_gn_venv.py
+index f8ac2fc83..91874415f 100644
+--- a/pw_build/py/pw_build/create_gn_venv.py
++++ b/pw_build/py/pw_build/create_gn_venv.py
+@@ -73,7 +73,7 @@ def main(
+     # Create the virtualenv.
+     if destination_dir.exists():
+         _rm_dir(destination_dir)
+-    venv.create(destination_dir, symlinks=True, with_pip=True)
++    venv.create(destination_dir, symlinks=True, with_pip=True, system_site_packages=True)
+ 
+     # Write out the depfile, making sure the Python path is
+     # relative to the outdir so that this doesn't add user-specific
+-- 
+2.34.1
+

@@ -1,19 +1,19 @@
 DESCRIPTION = "Voice App for E-Bike VIT"
 SECTION = "Multimedia"
 LICENSE = "Proprietary"
-LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=10c0fda810c63b052409b15a5445671a"
+LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=ca53281cc0caa7e320d4945a896fb837"
 
-inherit autotools pkgconfig
+inherit pkgconfig
 
 DEPENDS += "alsa-lib nxp-afe"
 
 RDEPENDS:${PN} = "nxp-afe-voiceseeker"
 
 NXPAFE_VOICESEEKER_SRC ?= "git://github.com/nxp-imx/imx-voiceui.git;protocol=https"
-SRCBRANCH_voice = "MM_04.09.00_2405_L6.6.y"
+SRCBRANCH_voice = "MM_04.10.02_2510_L6.12.49"
 
 NXP_DEMO_ASSET_SRC ?= "git://github.com/NXP/nxp-demo-experience-assets.git;protocol=https"
-SRCBRANCH_model = "lf-6.6.36_2.1.0"
+SRCBRANCH_model = "lf-6.12.49_2.2.0"
 
 SRC_URI = "\
 	${NXPAFE_VOICESEEKER_SRC};branch=${SRCBRANCH_voice};name=voice \
@@ -21,11 +21,11 @@ SRC_URI = "\
 
 SRCREV_FORMAT = "voice_model"
 
-SRCREV_voice = "cc51bc7475c0134fcb006ba28a16b2dcd418cf3a"
-SRCREV_model = "a552bd1ed30e93011d470636294ff3fa54b9690a"
+SRCREV_voice = "f2ff8703685b511371c3475f8c52c73dc1d21f32"
+SRCREV_model = "eb433849ba76bbe3100fb6ffbd48183468ac53e5"
 
 S = "${WORKDIR}/git"
-MODEL_DIR = "${WORKDIR}/demo-experience-ebike-vit"
+MODEL_DIR = "${UNPACKDIR}/demo-experience-ebike-vit"
 
 EXTRA_CONF = "--enable-armv8 --bindir=/unit_tests/ --libdir=${libdir}"
 
@@ -34,7 +34,7 @@ EXTRA_OEMAKE:mx93-nxp-bsp = "BUILD_ARCH=CortexA55"
 
 do_compile () {
 	cp ${MODEL_DIR}/VIT_Model_en.h ${WORKDIR}/git/vit/platforms/iMX8M_CortexA53/lib/VIT_Model_en.h
-  cp ${MODEL_DIR}/VIT_Model_en.h ${WORKDIR}/git/vit/platforms/iMX9_CortexA55/lib/VIT_Model_en.h
+	cp ${MODEL_DIR}/VIT_Model_en.h ${WORKDIR}/git/vit/platforms/iMX9_CortexA55/lib/VIT_Model_en.h
 	cd ${WORKDIR}/git
 	oe_runmake
 }

@@ -5,7 +5,7 @@ LIC_FILES_CHKSUM = "file://LICENSE.LGPL2.1;md5=4fbd65380cdd255951079008b364516c 
                     file://LICENSE.GPL2;md5=751419260aa954499f7abaabaa882bbe \
 "
 
-DEPENDS = "libxml2 libcap"
+DEPENDS = "libxml2 libcap dbus"
 RDEPENDS:${PN} = " \
 		rsync \
 		curl \
@@ -36,7 +36,7 @@ RDEPENDS:${PN}-ptest += "file make gmp nettle gnutls bash libgcc"
 
 RDEPENDS:${PN}-networking += "iptables"
 
-SRC_URI = "git://github.com/lxc/lxc.git;branch=stable-5.0;protocol=https \
+SRC_URI = "git://github.com/lxc/lxc.git;branch=stable-6.0;protocol=https \
 	file://lxc-1.0.0-disable-udhcp-from-busybox-template.patch \
 	file://run-ptest \
 	file://templates-actually-create-DOWNLOAD_TEMP-directory.patch \
@@ -47,12 +47,10 @@ SRC_URI = "git://github.com/lxc/lxc.git;branch=stable-5.0;protocol=https \
 	file://0001-template-if-busybox-contains-init-use-it-in-containe.patch \
 	file://dnsmasq.conf \
 	file://lxc-net \
-	file://0001-lxc-test-usernic-drop-cgroup-handling.patch \
-	file://0001-tests-remove-old-and-broken-cgroup-handling-code-fro.patch \
 	"
 
-SRCREV = "cb8e38aca27a23964941f0f011a8919aab8bebab"
-PV = "5.0.3+git"
+SRCREV = "fe31d844e882d5cc176a7935a93b14b4b2823992"
+PV = "v6.0.3"
 
 S = "${WORKDIR}/git"
 
@@ -80,9 +78,8 @@ PACKAGECONFIG[doc] = "-Dman=true,-Dman=false,,"
 PACKAGECONFIG[apparmor] = "-Dapparmor=true,-Dapparmor=false,apparmor,apparmor"
 PACKAGECONFIG[templates] = ",,, ${PN}-templates"
 PACKAGECONFIG[selinux] = "-Dselinux=true,-Dselinux=false,libselinux,libselinux"
-PACKAGECONFIG[seccomp] ="-Dseccomp=true,-Dseccomp=false,libseccomp,libseccomp"
-# meson equiv for the unitdir found yet
-# PACKAGECONFIG[systemd] = "--with-systemdsystemunitdir=${systemd_unitdir}/system/,--without-systemdsystemunitdir,systemd,"
+PACKAGECONFIG[seccomp] = "-Dseccomp=true,-Dseccomp=false,libseccomp,libseccomp"
+PACKAGECONFIG[systemd] = "-Dsystemd-unitdir=${sysconfdir}/systemd/system/, -Dsystemd-unitdir=, systemd,"
 PACKAGECONFIG[systemd] = "-Dinit-script=systemd,-Dinit-script=sysvinit,systemd,"
 
 # required by python3 to run setup.py
@@ -130,6 +127,8 @@ FILES:${PN}-networking += " \
 #     am_cv_python_pythondir='${PYTHON_SITEPACKAGES_DIR}' \
 #"
 
+INSANE_SKIP:${PN}-staticdev += "buildpaths"
+
 do_install:append() {
 	# The /var/cache/lxc directory created by the Makefile
 	# is wiped out in volatile, we need to create this at boot.
@@ -161,12 +160,12 @@ do_install:append() {
 	# /etc/default/lxc sources lxc-net, this allows lxc bridge when lxc-networking
 	# is not installed this results in no lxcbr0, but when lxc-networking is installed
 	# lxcbr0 will be fully configured.
-	install -m 644 ${WORKDIR}/lxc-net ${D}${sysconfdir}/default/
+	install -m 644 ${UNPACKDIR}/lxc-net ${D}${sysconfdir}/default/
 
 	# Force the main dnsmasq instance to bind only to specified interfaces and
 	# to not bind to virbr0. Libvirt will run its own instance on this interface.
 	install -d ${D}/${sysconfdir}/dnsmasq.d
-	install -m 644 ${WORKDIR}/dnsmasq.conf ${D}/${sysconfdir}/dnsmasq.d/lxc
+	install -m 644 ${UNPACKDIR}/dnsmasq.conf ${D}/${sysconfdir}/dnsmasq.d/lxc
 }
 
 EXTRA_OEMAKE += "TEST_DIR=${D}${PTEST_PATH}/src/tests"

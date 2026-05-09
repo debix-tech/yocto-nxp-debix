@@ -2,6 +2,7 @@ require recipes-qt/qt6/qtwebengine.inc
 require recipes-qt/qt6/chromium-gn.inc
 
 DEPENDS += " \
+    cups \
     nodejs-native \
     gperf-native \
     bison-native \
@@ -33,4 +34,5 @@ do_install:append() {
     # remove conflicting files with QtWebEngine
     rm -f ${D}${libdir}/cmake/Qt6BuildInternals/StandaloneTests/QtWebEngineTestsConfig.cmake
     rm -f ${D}${libdir}/cmake/Qt6/Find*.cmake
+    rm -f ${D}${libdir}/sbom/qtwebengine*
 }

@@ -6,7 +6,7 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=3b83ef96387f14655fc854ddc3c6bd57"
 RDEPENDS:${PN} = "skopeo"
 RDEPENDS:${PN}:class-native = ""
 
-SRCREV_umoci = "33ec00665c66321f1b1f34ca7e6f370ac35c1233"
+SRCREV_umoci = "8f807a317985f23f90f0d1dd75f5f6de34e0c263"
 SRC_URI = "git://github.com/opencontainers/umoci.git;branch=main;name=umoci;destsuffix=github.com/opencontainers/umoci;protocol=https \
           "
 
@@ -21,7 +21,7 @@ COMPATIBLE_HOST = "^(?!mips).*"
 
 # This disables seccomp and apparmor, which are on by default in the
 # go package. 
-EXTRA_OEMAKE="BUILDTAGS=''"
+EXTRA_OEMAKE = "BUILDTAGS=''"
 
 
 do_compile:class-native () {

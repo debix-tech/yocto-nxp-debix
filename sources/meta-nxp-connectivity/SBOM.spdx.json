@@ -1,0 +1,65 @@
+{
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "spdxVersion": "SPDX-2.3",
+  "creationInfo": {
+    "created": "2025-09-25T07:53:05Z",
+    "creators": [
+      "Organization: NXP"
+    ],
+    "licenseListVersion": "3.20"
+  },
+  "name": "meta-nxp-connectivity-imx_matter_2025_q3",
+  "dataLicense": "CC0-1.0",
+  "hasExtractedLicensingInfos": [
+    {
+      "licenseId": "LicenseRef-c477d96f-4c21-4c68-8667-1b0a6c606389",
+      "extractedText": "My Company Proprietary License\n==============================\n\nIMPORTANT This is not a real license but an example commercial license. It is\ntypical of proprietary commercial licenses and it has the following attributes:\n\n  * You are required to limit the liability of others (beyond reproducing a\n    license that contains a limitation of liability).\n\n  * You are required to include a copy of the license in distributions that you\n    make.\n\n  * You are required to disclaim warranties on behalf of others.\n\n  * You are not entitled to distribute source code.",
+      "name": "My Company Proprietary License"
+    }
+  ],
+  "documentNamespace": "https://nxp.com/spdx/6b56a67c-070b-4a82-b1d6-d909a49419bd",
+  "packages": [
+    {
+      "SPDXID": "SPDXRef-package-6b56a67c-070b-4a82-b1d6-d909a49419bd",
+      "name": "meta-nxp-connectivity",
+      "versionInfo": "imx_matter_2025_q3",
+      "licenseConcluded": "(MIT)",
+      "licenseDeclared": "(MIT)",
+      "downloadLocation": "https://github.com/nxp-imx/meta-nxp-connectivity",
+      "originator": "Organization: NXP",
+      "supplier": "NOASSERTION",
+      "externalRefs": [],
+      "filesAnalyzed": false
+    },
+    {
+      "SPDXID": "SPDXRef-package-6738f732-14a2-4ac3-8dff-63731e8c8dfc",
+      "name": "ZBOSS Zigbee software protocol stack",
+      "versionInfo": "Change for each release",
+      "licenseConcluded": "LicenseRef-c477d96f-4c21-4c68-8667-1b0a6c606389",
+      "licenseDeclared": "LicenseRef-c477d96f-4c21-4c68-8667-1b0a6c606389",
+      "downloadLocation": "NOASSERTION",
+      "originator": "Organization: ZBOSS Zigbee software protocol stack",
+      "supplier": "NOASSERTION",
+      "externalRefs": [],
+      "filesAnalyzed": false
+    }
+  ],
+  "relationships": [
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-package-6b56a67c-070b-4a82-b1d6-d909a49419bd"
+    },
+    {
+      "spdxElementId": "SPDXRef-package-6b56a67c-070b-4a82-b1d6-d909a49419bd",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-package-6738f732-14a2-4ac3-8dff-63731e8c8dfc"
+    },
+    {
+      "spdxElementId": "SPDXRef-package-6b56a67c-070b-4a82-b1d6-d909a49419bd",
+      "relationshipType": "OTHER",
+      "relatedSpdxElement": "SPDXRef-package-6738f732-14a2-4ac3-8dff-63731e8c8dfc",
+      "comment": "Separate Work"
+    }
+  ]
+}

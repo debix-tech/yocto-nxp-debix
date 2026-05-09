@@ -69,6 +69,8 @@ In file included from /home/sag/projects/openthread/ot-br-posix/src/web/web-serv
  create mode 100644 third_party/Simple-web-server/repo/tests/status_code_test.cpp
  create mode 100644 third_party/Simple-web-server/repo/utility.hpp
 
+Upstream-Status: Inappropriate  [platform specific changes]
+
 diff --git a/src/web/web-service/web_server.cpp b/src/web/web-service/web_server.cpp
 index d1002b13c8..86cae38364 100644
 --- a/src/web/web-service/web_server.cpp

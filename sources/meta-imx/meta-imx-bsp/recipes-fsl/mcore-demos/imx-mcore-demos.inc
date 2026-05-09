@@ -21,6 +21,7 @@ SOC:mx8qxp-nxp-bsp  = "imx8qx"
 SOC:mx8dx-nxp-bsp   = "imx8qx"
 SOC:mx8ulp-nxp-bsp  = "imx8ulp"
 SOC:mx93-nxp-bsp    = "imx93"
+SOC:mx94-nxp-bsp    = "imx943"
 SOC:mx95-nxp-bsp    = "imx95"
 
 MCORE_TYPE  ?= "m4"
@@ -30,6 +31,7 @@ MCORE_TYPE:mx8mp-nxp-bsp  = "m7"
 MCORE_TYPE:mx8mpul-nxp-bsp  = "m7"
 MCORE_TYPE:mx8ulp-nxp-bsp  = "m33"
 MCORE_TYPE:mx93-nxp-bsp  = "m33"
+MCORE_TYPE:mx943-nxp-bsp  = "mcore"
 MCORE_TYPE:mx95-nxp-bsp  = "m7"
 
 IMX_PACKAGE_NAME = "${SOC}-${MCORE_TYPE}-demo-${PV}"
@@ -37,18 +39,21 @@ SRC_URI:append = ";name=${SOC}"
 
 SCR = "SCR-${SOC}-${MCORE_TYPE}-demo.txt"
 
+MCORE_DEMO_FILE_EXTENSION               ?= "bin"
+MCORE_DEMO_FILE_EXTENSION:mx7ulp-nxp-bsp = "img"
+
 do_install () {
-    # install elf format binary to /lib/firmware
-    install -d ${D}${base_libdir}/firmware
-    install -m 0644 ${S}/*.elf ${D}${base_libdir}/firmware
+    install -d ${D}${nonarch_base_libdir}/firmware
+    if ls ${S}/*.elf > /dev/null 2>&1; then
+        install -m 0644 ${S}/*.elf ${D}${nonarch_base_libdir}/firmware
+    fi
+    install -m 0644 ${S}/*.${MCORE_DEMO_FILE_EXTENSION} ${D}${nonarch_base_libdir}/firmware
 }
 
-DEPLOY_FILE_EXT       ?= "bin"
-DEPLOY_FILE_EXT:mx7ulp-nxp-bsp = "img"
-
 do_deploy () {
-   # Install the demo binaries
-   install -m 0644 ${S}/*.${DEPLOY_FILE_EXT} ${DEPLOYDIR}/
+    # Install the demo binaries
+    install -d ${DEPLOYDIR}/mcore-demos
+    install -m 0644 ${S}/*.${MCORE_DEMO_FILE_EXTENSION} ${DEPLOYDIR}/mcore-demos/
 }
 
 addtask deploy after do_install

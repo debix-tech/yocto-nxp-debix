@@ -2,6 +2,8 @@ SUMMARY = "All packages for container host"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
+PACKAGE_ARCH = "${MACHINE_ARCH}"
+
 inherit packagegroup
 
 COMPATIBLE_HOST = "^(?!(mips|riscv)).*"
@@ -11,6 +13,9 @@ PACKAGES = "\
     packagegroup-lxc \
     packagegroup-docker \
     packagegroup-oci \
+    packagegroup-cni \
+    packagegroup-netavark \
+    packagegroup-container-tools \
     ${@bb.utils.contains('DISTRO_FEATURES', 'seccomp ipv6', \
                          'packagegroup-podman', '', d)} \
     packagegroup-containerd \
@@ -36,8 +41,28 @@ RDEPENDS:packagegroup-podman = " \
     podman \
 "
 
+RDEPENDS:packagegroup-cni = " \
+    cni \
+    iptables \
+    iproute2 \
+    ipset \
+    bridge-utils \
+"
+
+RDEPENDS:packagegroup-netavark = " \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'seccomp', 'netavark aardvark-dns', '', d)} \
+"
+
+RDEPENDS:packagegroup-container-tools = " \
+    skopeo \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'seccomp', 'conmon', '', d)} \
+    umoci \
+    ${@bb.utils.contains('VIRTUAL-RUNTIME_container_engine','podman','podman-tui nerdctl podman-compose','',d)}  \
+    ${@bb.utils.contains_any('VIRTUAL-RUNTIME_container_engine','docker docker-moby','docker-compose','',d)}  \
+"
+
 RDEPENDS:packagegroup-oci = " \
-    virtual-runc \
+    ${VIRTUAL-RUNTIME_container_runtime} \
     oci-systemd-hook \
     oci-runtime-tools \
     oci-image-tools \
@@ -45,5 +70,9 @@ RDEPENDS:packagegroup-oci = " \
 
 RDEPENDS:packagegroup-containerd = " \
     virtual-containerd \
+    packagegroup-cni \
+    containerd-cni \
+    nerdctl \
+    tini \
 "
 

@@ -15,14 +15,15 @@ RDEPENDS:${PN} += " \
     nativesdk-qtgrpc-tools \
     nativesdk-qtquick3d-dev \
     nativesdk-qtquick3d-tools \
+    nativesdk-qtopcua-dev \
+    nativesdk-qtopcua-tools \
     nativesdk-qtremoteobjects-dev \
     nativesdk-qtremoteobjects-tools \
     nativesdk-qtscxml-dev \
     nativesdk-qtscxml-tools \
     nativesdk-qtshadertools-dev \
     nativesdk-qtshadertools-tools \
-    nativesdk-qtwayland-dev \
-    nativesdk-qtwayland-tools \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'wayland', 'nativesdk-qtwayland-dev nativesdk-qtwayland-tools', '', d)} \
     ${FORLINUXHOST} \
 "
 

@@ -16,12 +16,12 @@ EXTRA_OEMAKE = "CC='${CC}' \
                 CFLAGS='${CFLAGS} -D_GNU_SOURCE'"
 
 do_install(){
-    sed -i -e "s;SBINDIR=/sbin;SBINDIR=$base_sbindir;"  ${S}/Makefile
+    sed -i -e "/^SBINDIR=/c SBINDIR=$base_sbindir"  ${S}/Makefile
     install -d ${D}${mandir}/man8 ${D}/${base_sbindir}
     oe_runmake install DESTDIR=${D}
 }
 
-inherit update-alternatives
+inherit update-alternatives sourceforge-releases
 
 ALTERNATIVE:${PN} = "getty"
 ALTERNATIVE_LINK_NAME[getty] = "${base_sbindir}/getty"

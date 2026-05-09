@@ -1,0 +1,105 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright 2024-2025 NXP
+ */
+
+/* Supported for chipsets:
+ - 9177
+ - IW610
+ Chip support list end */
+
+#include "imx91-9x9-qsb.dts"
+
+/ {
+	// Patch for IW61x:
+	// v1: ffu_gpio_irq (make GPIO_SPI_INT interruptible), bluetooth at 3M
+	// v2: make gpio IW61x_PD_N, M2 Murata_SPI_ENABLE, IW61x_IND_RST_15_4 drivable from userspace
+	// v3: make gpio IW61x_PD_N, IW61x_IND_RST_15_4 drivable from userspace
+	// v4: gpio naming and options description in model
+	// v5: SPI 50µs interleaved
+	model = "NXP i.MX91 9X9 QSB board for IW61x-v5: M2 IWxxx SPI INT enabled, PDN in user space, 50µs delay";
+};
+
+&reg_usdhc3_vmmc {
+		// Remap gpio to P1_0 which is not used AND not connected (R131: DNP) to leave pcal6524 20 free for the user space
+		gpio = <&pcal6524 9 GPIO_ACTIVE_HIGH>;
+		//gpio = <&pcal6524 20 GPIO_ACTIVE_HIGH>;
+};
+
+&lpuart5 {
+		/* BT */
+		pinctrl-names = "default";
+		pinctrl-assert-gpios = <&pcal6524 19 GPIO_ACTIVE_HIGH>;
+		pinctrl-0 = <&pinctrl_uart5>;
+		status = "okay";
+
+		bluetooth {
+				compatible = "nxp,88w8987-bt";
+				fw-init-baudrate = <3000000>;
+		};
+};
+
+&flexcan2 {
+	    status = "disabled";
+};
+
+&lpuart7 {
+	status = "disabled";
+};
+
+
+/* enable lpspi3 and lpspi5 pads on RPI */
+&pcal6524 {
+		/* EXP_SEL selects pins between board and RPi */
+		exp-sel-hog {
+				gpio-hog;
+				gpios = <22 GPIO_ACTIVE_HIGH>;
+				output-high;
+		};
+};
+
+&lpi2c2 {
+	pcal5424: gpio@22 {
+		gpio-line-names = "", "", "", "", "", "", "", "", "", "", "IWxxx_NB_SPI_INT", "", "", "", "", "", "", "", "", "", "IWxxx_PD_N";
+	};
+};
+
+&lpi2c1 {
+	pcal6408: gpio@20 {
+		compatible = "nxp,pcal9554b";
+		reg = <0x20>;
+		gpio-controller;
+		#gpio-cells = <2>;
+		status = "okay";
+		gpio-line-names = "IWxxx_NB_SPI_ENA", "IWxxx_NB_IND_RST_15_4";
+	};
+};
+&lpspi3 {
+	fsl,spi-num-chipselects = <1>;
+	pinctrl-names = "default", "sleep";
+	pinctrl-0 = <&pinctrl_lpspi3>;
+	pinctrl-1 = <&pinctrl_lpspi3>;
+	cs-gpios = <&gpio2 8 GPIO_ACTIVE_LOW>;
+	pinctrl-assert-gpios = <&adp5585gpio 4 GPIO_ACTIVE_LOW>;
+	pinctrl-assert-gpios = <&pcal6408 0 GPIO_ACTIVE_HIGH>;
+	status = "okay";
+
+	spidev0: spi@0 {
+		reg = <0>;
+		compatible = "lwn,bk4";
+		spi-max-frequency = <1000000>;
+		spi-cs-inactive-delay-ns = <50000>;
+		label="IWxxx_SPIDEV";
+	};
+};
+
+&iomuxc {
+	pinctrl_lpspi3: lpspi3grp {
+		fsl,pins = <
+			MX91_PAD_GPIO_IO08__GPIO2_IO8       0x3fe
+			MX91_PAD_GPIO_IO09__LPSPI3_SIN      0x3fe
+			MX91_PAD_GPIO_IO10__LPSPI3_SOUT     0x3fe
+			MX91_PAD_GPIO_IO11__LPSPI3_SCK      0x3fe
+		>;
+	};
+};

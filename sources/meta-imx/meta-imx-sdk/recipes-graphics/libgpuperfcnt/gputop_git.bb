@@ -9,14 +9,14 @@ DEPENDS = "libgpuperfcnt"
 GPUTOP_SRC ?= "git://github.com/nxp-imx/imx-gputop.git;protocol=https"
 SRCBRANCH = "release"
 SRC_URI = "${GPUTOP_SRC};branch=${SRCBRANCH} "
-SRCREV = "627e8823e1ba17c6d12b408835029a1c065bea84"
+SRCREV = "ee449b4f4d5293e971693b7865972f8387f8d171"
 
 S = "${WORKDIR}/git"
 
 inherit cmake pkgconfig
 
 PACKAGECONFIG ??= "vivante"
-PACKAGECONFIG:mx95-nxp-bsp = "mali"
+PACKAGECONFIG:imxmali = "mali"
 
 PACKAGECONFIG[mali] = "-DMALI_GPU=1,,,,,vivante"
 PACKAGECONFIG[vivante] = ",,,,,mali"

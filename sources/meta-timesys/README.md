@@ -1,19 +1,16 @@
-![Timesys Vigiles](https://www.timesys.com/wp-content/uploads/vigiles-cve-monitoring.png "Timesys Vigiles")
-
 What is meta-timesys?
 =====================
 
-This Yocto layer provides scripts for image manifest generation used for security monitoring and notification as part of the **[Timesys Vigiles](https://www.timesys.com/security/vigiles/)** product offering.
+This Yocto layer provides scripts for SBOM generation used for vulnerability monitoring and notification as part of the **[Vigiles](https://www.lynx.com/solutions/vulnerability-mitigation-management)** product offering.
 
 
 What is Vigiles?
 ================
 
-Vigiles is a vulnerability management tool that provides build-time Yocto CVE Analysis of target images. It does this by collecting metadata about packages to be installed and uploading it to be compared against the Timesys CVE database.A high-level overview of the detected vulnerabilities is returned and a full detailed analysis can be viewed online.
+Vigiles is a vulnerability management tool that provides build-time Yocto CVE Analysis of target images. It does this by collecting metadata about packages to be installed and uploading it to be compared against the Vigiles CVE database.A high-level overview of the detected vulnerabilities is returned and a full detailed analysis can be viewed online.
 
 
-Register (free) and download the API key to access the full feature set based on Vigiles Basic, Plus or Prime:
-https://linuxlink.timesys.com/docs/wiki/engineering/LinuxLink_Key_File
+To request a trial account, please get in touch with us at sales@timesys.com
 
 
 Pre-Requisites
@@ -29,14 +26,13 @@ If you do not already have an environment configured, please use the following t
 
 ### Review the Yocto system requirements here:
 
-https://docs.yoctoproject.org/5.0/ref-manual/system-requirements.html#system-requirements
+https://docs.yoctoproject.org/dev/ref-manual/system-requirements.html#system-requirements
 
 ### Clone poky and meta-timesys
 
 ```sh
-RELEASE=scarthgap
-git clone git://git.yoctoproject.org/poky.git -b $RELEASE
-git clone https://github.com/TimesysGit/meta-timesys.git -b $RELEASE
+git clone git://git.yoctoproject.org/poky.git
+git clone https://github.com/TimesysGit/meta-timesys.git
 ```
 
 ### Activate yocto build environment (needed for manifest creation)
@@ -83,18 +79,16 @@ $ readlink vigiles/core-image-minimal-report.txt
 core-image-minimal/core-image-minimal-2019-06-07_19.22.40-report.txt
 ```
 
-_The output will differ based on whether you are running with a LinuxLink subscription or in Demo Mode_.
 
-
-##### Subscription Mode Console Output
+##### Console Output
 ```
-Vigiles: Requesting image analysis from LinuxLink ...
+Vigiles: Requesting image analysis ...
 
 
 -- Vigiles CVE Report --
 
 	View detailed online report at:
-	  https://linuxlink.timesys.com/cves/reports/ODUzOA.D9xLIQ.KKiK2E76n---q6_-KmJrsZ9ap9Y
+	  https://vigiles.lynx.com/cves/reports/ODUzOA.D9xLIQ.KKiK2E76n---q6_-KmJrsZ9ap9Y
 
 	Unfixed: 62 (0 RFS, 60 Kernel, 2 Toolchain)
 	Unfixed, Patch Available: 7 (2 RFS, 0 Kernel, 5 Toolchain)
@@ -105,48 +99,13 @@ Vigiles: Requesting image analysis from LinuxLink ...
 	  vigiles/core-image-minimal/core-image-minimal-2019-06-07_19.22.40-report.txt
 ```
 
-##### Demo Mode Console Output
-```
--- Vigiles Demo Mode Notice --
-	No API keyfile was found, or the contents were invalid.
-
-	Please see this document for API key information:
-	https://linuxlink.timesys.com/docs/wiki/engineering/LinuxLink_Key_File
-
-	The script will continue in demo mode, which will link you to temporarily available online results only.
-	You will need to login or register for a free account in order to see the report.
-
-	For more information on the security notification service, please visit:
-	https://www.timesys.com/security/vulnerability-patch-notification/
-
-Vigiles: Requesting image analysis from LinuxLink ...
-
-
--- Vigiles CVE Report --
-
-	Complete online report at:
-	  https://linuxlink.timesys.com/cves/reports/ODUyMA.D9wwnQ.9MTUnSVk6Xi-Q1kO0ea--e4wVJ4
-	  NOTE: Running in Demo Mode will cause this URL to expire after one day.
-
--- Vigiles CVE Overview --
-
-	Unfixed: 62
-	Unfixed, Patch Available: 7
-	Fixed: 0
-	CPU: 0
-
-
-	Local summary written to:
-	  vigiles/core-image-minimal/core-image-minimal-2019-06-07_17.29.31-report.txt
-```
-
 
 Interpreting the Results
 ========================
 
 ### Console Output
 
-A CVE summary is printed in both Subscription and Demo modes and contains the following. 
+A CVE summary is printed and contains the following:
 
 * "Unfixed" CVEs are existing CVEs that have been reported against packages to be installed.
 
@@ -157,10 +116,9 @@ A CVE summary is printed in both Subscription and Demo modes and contains the fo
 
 * "CPU" CVEs are filed against the hardware. They may be fixed or mitigated in other components such as the kernel or compiler.
 
-* "High CVSS" (_Subscription Mode Only_) CVEs are those that are of utmost priority and require immediate attention, based on their Common Vulnerability Scoring System (v3) ranking.
+* "High CVSS" CVEs are those that are of utmost priority and require immediate attention, based on their Common Vulnerability Scoring System (v3) ranking.
 
-
-Additionally, in Subscription Mode, the distribution of the vulnerabilities across system components will be displayed.
+Additionally, the distribution of the vulnerabilities across system components will be displayed.
 
 
 ### Online Report
@@ -170,7 +128,7 @@ The Vigiles CVE online report specified in the output provides a dashboard inter
 
 ### Local Summary
 
-In both operating modes, the local summary will include the console output as well as descriptive information about the report instance. In Subscription Mode, additional information is included about each CVE that the scan detects, as well as any fixes that have been applied. This is an example from the reports generated above.
+The local summary includes console output and descriptive information about the report instance. It also includes detailed information about each CVE detected during the scan and any fixes that have been applied. Below is an example from a generated report.
 
 ```
 -- Recipe CVEs --
@@ -204,7 +162,7 @@ In both operating modes, the local summary will include the console output as we
 
 ### CVE Manifest
 
-The Vigiles CVE Scanner creates and sends a manifest describing your build to the LinuxLink Server. This manifest is located at
+The Vigiles CVE Scanner creates and sends a manifest describing your build to the Vigiles Server. This manifest is located at
 
 ```sh
 $ readlink vigiles/core-image-minimal-cve.json 
@@ -247,22 +205,39 @@ Instead of e.g.
 ```
 
 
-### Vigiles Whitelist
+### Whitelisting CVEs
+Some packages may have CVEs associated with them that are known to not affect
+a particular machine or configuration. 
+A user may set the VIGILES_WHITELIST variable in local.conf to
+the path of a CSV file containing a list of CVEs to omit from the Vigiles
+Report.
 
-"Whitelist" Recipes and CVEs are listed in the "VIGILES_WHITELIST" variable. They are NOT included in the report.
+The CSV expects CVE ID (required field) and package, version, and description (optional fields) per line. 
+Any additional fields will be ignored.
 
-The Whitelist can be adjusted in _conf/local.conf_ by appending **VIGILES_WHITELIST**:
+For example both are valid
 
-```
-VIGILES_WHITELIST += "\
-	CVE-1234-ABCD \
-"
-```
+<pre>
+$ cat $HOME/projects/yocto/vigiles-not-affected.csv
+
+cve-id,package,version,description
+CVE-2019-1010023,glibc,2.39,External whitelist
+CVE-2019-1010024,glibc,2.39,External whitelist
+
+</pre>
+
+<pre>
+$ cat $HOME/projects/yocto/vigiles-not-affected.csv
+
+CVE-2019-1010023
+CVE-2019-1010024
+</pre>
+
 
 
 ### Kernel Config Filter
 
-The Vigiles CVE Scanner can be configured to upload a Linux Kernel _.config_ file to LinuxLink along with the image manifest. This filter will reduce the number of kernel CVEs reported by removing those related to features which are not being built for your kernel. There are 2 ways to enable this feature -- Automatic Detection or Manual Specification
+The Vigiles CVE Scanner can be configured to upload a Linux Kernel _.config_ file along with the SBOM. This filter will reduce the number of kernel CVEs reported by removing those related to features which are not being built for your kernel. There are 2 ways to enable this feature -- Automatic Detection or Manual Specification
 
 * Automatic Detection
 
@@ -285,7 +260,7 @@ VIGILES_KERNEL_CONFIG = "/projects/kernel/linux-4.14-ts+imx-1.0/.config"
 
 ### U-Boot Config Filter
 
-The Vigiles CVE Scanner can be configured to upload a U-Boot _.config_ file to LinuxLink along with the image manifest. This filter will reduce the number of U-Boot CVEs reported by removing those related to features which are not being built for your U-Boot. There are 2 ways to enable this feature -- Automatic Detection or Manual Specification
+The Vigiles CVE Scanner can be configured to upload a U-Boot _.config_ file along with the SBOM. This filter will reduce the number of U-Boot CVEs reported by removing those related to features which are not being built for your U-Boot. There are 2 ways to enable this feature -- Automatic Detection or Manual Specification
 
 * Automatic Detection
 
@@ -306,10 +281,9 @@ VIGILES_UBOOT_CONFIG = "</projects/uboot/uboot-2020.04/.config>"
 ```
 
 
-### Specifying a LinuxLink Key File
+### Specifying a Vigiles API Key File
 
-Full CVE reporting requires a LinuxLink License Key, though the Vigiles CVE Scanner will still execute in 
-Demo Mode and produce an abbreviated report if one is not configured.
+A Vigiles API Key is required to run the Vigiles CVE Scanner and generate CVE reports.
 
 To use an alternate key, or a key in a non-default location, you can specify the location in _conf/local.conf_ with a statement like the following:
 
@@ -374,6 +348,18 @@ VIGILES_EXTRA_PACKAGES = " \
 	${HOME}/projects/this-bsp/non-yocto/yocto-extra-ui.csv   \
 "
 ```
+
+In order to explicitly include packages which are built by the Bitbake/Yocto
+process but for some reason not present in rootfs manifest (e.g.
+some bootloader or custom firmware may be not picked up through the recursive
+RDEPENDS for the image), ```VIGILES_EXTRA_BACKFILL``` may be used.
+
+For example, one may set this in their local.conf:
+
+```
+VIGILES_EXTRA_BACKFILL = "some-firmware-package"
+```
+
 
 ##### CSV Format
 
@@ -457,6 +443,16 @@ VIGILES_INCLUDE_CLOSED_LICENSES = "0"
 ```
 
 
+### Exclude native and build-only packages in SBOM
+
+To exclude all packages except backfill packages (packages built during the BitBake process
+but not listed in the SBOM, because they may not be a part of the final rootfs manifest or 
+dependencies of its packages e.g., glibc) and packages present in rootfs
+manifest, set VIGILES_SBOM_ROOTFS_MANIFEST_ONLY = "1"
+
+**Note:** This might result in the SBOM which is not NTIA compliant.
+
+
 ### Disable SBOM and Report generation for initramfs image
 
 SBOM and report generation for the initramfs image can be disabled in local conf.
@@ -475,15 +471,88 @@ To disable initramfs report generation only, set VIGILES_DISABLE_INITRAMFS_REPOR
 VIGILES_DISABLE_INITRAMFS_REPORT = "1"
 ```
 
+### Setting Error Level for Vigiles Errors
+
+Users can configure the VIGILES_ERROR_LEVEL in conf/local.conf to control how errors related to vigiles check are logged. Depending on the specific use case, the error level can be set to `FATAL`, `ERROR`, `WARNING` or `INFO` to log error messages as bitbake's fatal, error, warn or plain logs. The default is set to `INFO`.
+
+```
+VIGILES_ERROR_LEVEL = "FATAL"
+```
+
+### Specifying ecosystems that should be used for generating report (Enterprise Vigiles Only)
+
+Ecosystems could be specified to include ecosystem specific vulnerabilities into the vulnerability report.
+This feature is currently available for Enterprise vigiles only.
+
+To specify ecosystems to be used set VIGILES_ECOSYSTEMS to a comma seperated string of ecosystems
+
+```
+VIGILES_ECOSYSTEMS = "Linux, Maven, PyPI, Ubuntu:20.04:LTS"
+```
+
+To include all the ecosystems set VIGILES_ECOSYSTEMS to "all"
+
+```
+VIGILES_ECOSYSTEMS = "all"
+```
+
+Below is the list of valid ecosystems that can be used
+```
+AlmaLinux:
+['AlmaLinux', 'AlmaLinux:8', 'AlmaLinux:9']
+
+Alpine:
+['Alpine', 'Alpine:v3.10', 'Alpine:v3.11', 'Alpine:v3.12', 'Alpine:v3.13', 'Alpine:v3.14', 'Alpine:v3.15', 'Alpine:v3.16',
+ 'Alpine:v3.17', 'Alpine:v3.18', 'Alpine:v3.19', 'Alpine:v3.2', 'Alpine:v3.20', 'Alpine:v3.3', 'Alpine:v3.4', 'Alpine:v3.5',
+ 'Alpine:v3.6', 'Alpine:v3.7', 'Alpine:v3.8', 'Alpine:v3.9']
+
+Debian:
+['Debian', 'Debian:10', 'Debian:11', 'Debian:12', 'Debian:13', 'Debian:3.0', 'Debian:3.1', 'Debian:4.0', 'Debian:5.0',
+ 'Debian:6.0', 'Debian:7', 'Debian:8', 'Debian:9']
+
+Rocky:
+['Rocky Linux', 'Rocky Linux:8', 'Rocky Linux:9']
+
+Ubuntu:
+['Ubuntu', 'Ubuntu:14.04:LTS', 'Ubuntu:16.04:LTS', 'Ubuntu:18.04:LTS', 'Ubuntu:20.04:LTS', 'Ubuntu:22.04:LTS', 'Ubuntu:23.10',
+ 'Ubuntu:24.04:LTS', 'Ubuntu:Pro:14.04:LTS', 'Ubuntu:Pro:16.04:LTS', 'Ubuntu:Pro:18.04:LTS', 'Ubuntu:Pro:20.04:LTS',
+ 'Ubuntu:Pro:22.04:LTS', 'Ubuntu:Pro:24.04:LTS']
+
+Others:
+['Android', 'Bitnami', 'CRAN', 'GIT', 'GSD', 'GitHub Actions', 'Go', 'Hackage', 'Hex', 'Linux', 'Maven', 'NuGet', 'OSS-Fuzz',
+ 'Packagist', 'Pub', 'PyPI', 'RubyGems', 'SwiftURL', 'UVI', 'crates.io', 'npm']
+
+```
+
+
+### Subscribe SBOM Report Notification (Enterprise Vigiles Only)
+
+SBOM report notifications can be configured in `local.conf` using `VIGILES_NOTIFICATION_FREQUENCY`. This setting allows users to set notification frequency for their report
+This feature is currently available for Enterprise vigiles only.
+
+By default, it is empty (`""`), meaning no subscription setting will be applied
+
+To enable notifications, set one of the following values:
+
+```
+"none", "daily", "weekly", "monthly"
+```
+
+For example, To enable weekly notifications, set:
+
+```
+VIGILES_NOTIFICATION_FREQUENCY = "weekly"
+```
+
 
 Maintenance
 ===========
 
-The Vigiles CVE Scanner and meta-timesys are maintained by [The Timesys Security team](mailto:vigiles@timesys.com).
+The Vigiles CVE Scanner and meta-timesys are maintained by [The Lynx Security team](mailto:vigiles@timesys.com).
 
 For Updates, Support and More Information, please see:
 
-[Vigiles Website](https://www.timesys.com/security/vigiles/)
+[Vigiles Website](https://www.lynx.com/solutions/vulnerability-mitigation-management)
 
 and
 

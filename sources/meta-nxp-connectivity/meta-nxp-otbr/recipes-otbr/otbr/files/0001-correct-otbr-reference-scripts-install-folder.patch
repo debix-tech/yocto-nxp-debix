@@ -10,6 +10,8 @@ Signed-off-by: Haoran Wang <elven.wang@nxp.com>
  tools/reference_device/testharness-discovery.init.in | 2 +-
  3 files changed, 4 insertions(+), 4 deletions(-)
 
+Upstream-Status: Inappropriate  [platform specific changes]
+
 diff --git a/tools/reference_device/CMakeLists.txt b/tools/reference_device/CMakeLists.txt
 index 25513c3533..2f91342cb1 100644
 --- a/tools/reference_device/CMakeLists.txt

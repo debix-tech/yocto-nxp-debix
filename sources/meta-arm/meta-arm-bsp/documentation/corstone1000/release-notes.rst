@@ -1,5 +1,5 @@
 ..
- # Copyright (c) 2022-2024, Arm Limited.
+ # Copyright (c) 2022-2025, Arm Limited.
  #
  # SPDX-License-Identifier: MIT
 
@@ -20,6 +20,28 @@ prove defective, you assume the entire cost of all necessary servicing, repair
 or correction.
 
 ***********************
+Release notes - 2025.05
+***********************
+
+Known Issues or Limitations
+---------------------------
+
+ - Crypto isolation is not supported in the Secure world of Corstone-1000. Additionally, clients in
+   the Normal world are not isolated from one another.Therefore, if an end user wants to add a new
+   Secure Partition (SP) (such as a software TPM) that accesses the Crypto service via the SE-Proxy,
+   they are responsible for implementing their own isolation mechanisms to ensure proper security boundaries.
+ - DSTREAM debug probe may experience unreliable USB connectivity when used with Arm DS for secure debug.
+   This issue is under active investigation, and we are working to identify and resolve compatibility issues in a future update.
+   As a more stable alternative, the ULINKpro debug probe is recommended for use with Corstone-1000 in secure debug scenarios.
+
+
+***********************
+Release notes - 2024.11
+***********************
+
+The same notes as the 2024.06 release still apply.
+
+***********************
 Release notes - 2024.06
 ***********************
 
@@ -37,6 +59,16 @@ Platform Support
    https://developer.arm.com/downloads/-/download-fpga-images
  - This software release is tested on Corstone-1000 Fast Model platform (FVP) version 11.23_25
    https://developer.arm.com/tools-and-software/open-source-software/arm-platforms-software/arm-ecosystem-fvps
+
+SystemReady IR v2.0 Certification Milestone
+-------------------------------------------
+
+As of this release, Corstone-1000 has achieved `SystemReady IR v2.0 certification <https://www.arm.com/architecture/system-architectures/systemready-certification-program/ve>`__.
+This milestone confirms compliance with the SystemReady IR requirements, ensuring broader compatibility and reliability for deployment.
+
+Applied patch `313ad2a0e600 <https://git.yoctoproject.org/meta-arm/commit/?h=scarthgap&id=313ad2a0e600655d9bfbe53646e356372ff02644>`__ to address compatibility requirements for SystemReady IR v2.0.
+
+This update is included in tag `CORSTONE1000-2024.06-systemready-ir-v2.0 <https://git.yoctoproject.org/meta-arm/tag/?h=CORSTONE1000-2024.06-systemready-ir-v2.0>`__ and builds on the `CORSTONE1000-2024.06` release.
 
 ***********************
 Release notes - 2023.11

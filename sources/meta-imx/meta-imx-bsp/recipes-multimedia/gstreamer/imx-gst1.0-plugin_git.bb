@@ -1,5 +1,5 @@
 # Copyright (C) 2014,2016 Freescale Semiconductor
-# Copyright 2017-2021 NXP
+# Copyright 2017-2025 NXP
 # Copyright (C) 2012-2015 O.S. Systems Software LTDA.
 # Released under the MIT license (see COPYING.MIT for the terms)
 DESCRIPTION = "Gstreamer freescale plugins"
@@ -19,26 +19,27 @@ DEPENDS:append:mx6-nxp-bsp = " imx-lib"
 DEPENDS:append:mx7-nxp-bsp = " imx-lib"
 DEPENDS:append:mx8ulp-nxp-bsp = " imx-lib"
 DEPENDS:append:mx93-nxp-bsp = " imx-lib"
+DEPENDS:append:mx943-nxp-bsp = " imx-lib"
 DEPENDS:append:imxvpu = " imx-vpuwrap"
 DEPENDS:append:imxfbdev:imxgpu = " libdrm"
 DEPENDS_IMXGPU        = ""
 DEPENDS_IMXGPU:imxgpu = "${DEPENDS_IMX_OPENCL_CONVERTER}"
-DEPENDS_IMX_OPENCL_CONVERTER               = ""
-DEPENDS_IMX_OPENCL_CONVERTER:mx8-nxp-bsp   = "imx-opencl-converter"
+DEPENDS_IMX_OPENCL_CONVERTER               = "imx-opencl-converter"
+DEPENDS_IMX_OPENCL_CONVERTER:mx6-nxp-bsp   = ""
+DEPENDS_IMX_OPENCL_CONVERTER:mx7-nxp-bsp   = ""
 DEPENDS_IMX_OPENCL_CONVERTER:mx8mm-nxp-bsp = ""
-DEPENDS_IMX_OPENCL_CONVERTER:mx95-nxp-bsp   = "imx-opencl-converter"
 
 # For backwards compatibility
 RREPLACES:${PN}  = "gst1.0-fsl-plugin"
 RPROVIDES:${PN}  = "gst1.0-fsl-plugin"
 RCONFLICTS:${PN} = "gst1.0-fsl-plugin"
 
-PV = "4.9.1+git${SRCPV}"
+PV = "4.10.2+git${SRCPV}"
 
 SRC_URI = "${IMXGST_SRC};branch=${SRCBRANCH}"
 IMXGST_SRC ?= "git://github.com/nxp-imx/imx-gst1.0-plugin.git;protocol=https"
-SRCBRANCH = "MM_04.09.01_2408_L6.6.y"
-SRCREV = "87135d5f084b6c61efa6671cddc3a5509ab11640"
+SRCBRANCH = "MM_04.10.02_2510_L6.12.49"
+SRCREV = "663b07393f6b43d3ede6078c161b646fc3ddba88"
 
 S = "${WORKDIR}/git"
 
@@ -89,8 +90,11 @@ FILES:${PN}-staticdev += "${libdir}/gstreamer-1.0/*.a"
 FILES:${PN}-gplay = "${bindir}/gplay-1.0"
 FILES:${PN}-libgplaycore = "${libdir}/libgplaycore-1.0${SOLIBS}"
 FILES:${PN}-libgstfsl = "${libdir}/libgstfsl-1.0${SOLIBS}"
-FILES:${PN}-grecorder = "${bindir}/grecorder-1.0"
+FILES:${PN}-grecorder = "${bindir}/grecorder-1.0 \
+                         ${bindir}/pipewire_recorder.py"
 FILES:${PN}-librecorder-engine = "${libdir}/librecorder_engine-1.0${SOLIBS}"
 FILES:${PN}-libplayengine = "${libdir}/libplayengine-1.0${SOLIBS}"
+
+INSANE_SKIP:${PN} = "build-deps"
 
 COMPATIBLE_MACHINE = "(imx-nxp-bsp)"

@@ -9,11 +9,11 @@
 # SPDX-License-Identifier: GPL-2.0-only
 #
 
-__version__ = "2.8.0"
+__version__ = "2.12.1"
 
 import sys
-if sys.version_info < (3, 8, 0):
-    raise RuntimeError("Sorry, python 3.8.0 or later is required for this version of bitbake")
+if sys.version_info < (3, 9, 0):
+    raise RuntimeError("Sorry, python 3.9.0 or later is required for this version of bitbake")
 
 if sys.version_info < (3, 10, 0):
     # With python 3.8 and 3.9, we see errors of "libgcc_s.so.1 must be installed for pthread_cancel to work"
@@ -37,6 +37,34 @@ class BBHandledException(Exception):
 import os
 import logging
 from collections import namedtuple
+import multiprocessing as mp
+
+# Python 3.14 changes the default multiprocessing context from "fork" to
+# "forkserver". However, bitbake heavily relies on "fork" behavior to
+# efficiently pass data to the child processes. Places that need this should do:
+#   from bb import multiprocessing
+# in place of
+#   import multiprocessing
+
+class MultiprocessingContext(object):
+    """
+    Multiprocessing proxy object that uses the "fork" context for a property if
+    available, otherwise goes to the main multiprocessing module. This allows
+    it to be a drop-in replacement for the multiprocessing module, but use the
+    fork context
+    """
+    def __init__(self):
+        super().__setattr__("_ctx", mp.get_context("fork"))
+
+    def __getattr__(self, name):
+        if hasattr(self._ctx, name):
+            return getattr(self._ctx, name)
+        return getattr(mp, name)
+
+    def __setattr__(self, name, value):
+        raise AttributeError(f"Unable to set attribute {name}")
+
+multiprocessing = MultiprocessingContext()
 
 
 class NullHandler(logging.Handler):
@@ -103,26 +131,6 @@ class BBLoggerAdapter(logging.LoggerAdapter, BBLoggerMixin):
     def __init__(self, logger, *args, **kwargs):
         self.setup_bblogger(logger.name)
         super().__init__(logger, *args, **kwargs)
-
-    if sys.version_info < (3, 6):
-        # These properties were added in Python 3.6. Add them in older versions
-        # for compatibility
-        @property
-        def manager(self):
-            return self.logger.manager
-
-        @manager.setter
-        def manager(self, value):
-            self.logger.manager = value
-
-        @property
-        def name(self):
-            return self.logger.name
-
-        def __repr__(self):
-            logger = self.logger
-            level = logger.getLevelName(logger.getEffectiveLevel())
-            return '<%s %s (%s)>' % (self.__class__.__name__, logger.name, level)
 
 logging.LoggerAdapter = BBLoggerAdapter
 
@@ -214,7 +222,6 @@ def deprecated(func, name=None, advice=""):
 # For compatibility
 def deprecate_import(current, modulename, fromlist, renames = None):
     """Import objects from one module into another, wrapping them with a DeprecationWarning"""
-    import sys
 
     module = __import__(modulename, fromlist = fromlist)
     for position, objname in enumerate(fromlist):

@@ -12,6 +12,8 @@ Signed-off-by: Haoran.Wang <elven.wang@nxp.com>
  1 file changed, 0 insertions(+), 0 deletions(-)
  create mode 100644 iMX8M/tee.bin
 
+Upstream-Status: Inappropriate  [platform specific changes]
+
 diff --git a/iMX8M/tee.bin b/iMX8M/tee.bin
 new file mode 100644
 index 0000000000000000000000000000000000000000..db348f97432cf85c47165dd43f48c2c057379545

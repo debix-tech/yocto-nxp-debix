@@ -27,3 +27,5 @@ render:x:527:
 sgx:x:528:
 ptest:x:529:
 xuser:x:530:
+seat:x:531:
+audio:x:532:

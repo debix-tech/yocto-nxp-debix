@@ -1,4 +1,4 @@
-# Copyright 2021-2024 NXP
+# Copyright 2021-2025 NXP
 
 SUMMARY = "NXP i.MX SECURE ENCLAVE library"
 DESCRIPTION = "NXP IMX SECURE ENCLAVE library"
@@ -10,8 +10,8 @@ DEPENDS = " mbedtls openssl"
 
 SRC_URI = "${SECURE_ENCLAVE_LIB_SRC};branch=${SRCBRANCH}"
 SECURE_ENCLAVE_LIB_SRC ?= "git://github.com/NXP/imx-secure-enclave.git;protocol=https"
-SRCBRANCH = "lf-6.6.36_2.1.0"
-SRCREV = "a21f2aa3014bcf36d40d5feb70484f5bcb6aeb56"
+SRCBRANCH = "lf-6.12.49_2.2.0"
+SRCREV = "c0a1a5b32b28e0b85e45ca239e7353cc3fb1c1bb"
 
 S = "${WORKDIR}/git"
 
@@ -25,5 +25,7 @@ do_install() {
 	oe_runmake -C ${S} DESTDIR=${D} install_tests
 }
 
+PACKAGE_ARCH = "${MACHINE_SOCARCH}"
+
 FILES:${PN} += "${datadir}/se"
-RDEPENDS:${PN} += "bash"
+RDEPENDS:${PN}:append = " bash"

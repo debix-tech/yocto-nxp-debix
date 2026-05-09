@@ -1,17 +1,17 @@
 NXP Software Content Register
 
 Release: GoPoint for i.MX Applications Processors
-Version: 4.10
-Date: September 2024
-Outgoing License: LA_OPT_NXP_Software_License v57 July 2024 - Additional distribution license granted - Section 2.3 applies
-License File: GPNT-LICENSE.txt
+Version: 4.15
+Date: December 2025
+Outgoing License: LA_OPT_Online Code Hosting NXP_Software_License - v1.4 May 2025
+License File: LICENSE.txt
 
 --------------- THIS PACKAGE ---------------
 
 Package:                    meta-nxp-demo-experience
-Release branch:             scarthgap-6.6.36-2.1.0
+Release branch:             walnascar-6.12.49-2.2.0
 Outgoing License:           MIT
-License File:               LICENSE.txt
+License File:               ./licenses/LICENSE.txt
 Package Category:           Software build scripts
 Type of content:            Bitbake recipes
 Description and comments:   Yocto Project meta layer used to integrate GoPoint into the i.MX BSP
@@ -21,8 +21,8 @@ Origin:                     NXP (MIT) Yocto Recipes
 ---------- OTHER REQUIRED PACKAGES ---------
 
 Package:                    nxp-demo-experience
-Release branch:             lf-6.6.36_2.1.0
-Outgoing License:           BSD-2-Clause
+Release branch:             lf-6.12.49_2.2.0
+Outgoing License:           LA_OPT_Online Code Hosting NXP_Software_License - v1.4 May 2025
 License File:               nxp-demo-experience/LICENSE.txt
 Package Category:           Demo application
 Type of content:            Source code
@@ -33,20 +33,19 @@ Origin:                     NXP (BSD-2-Clause)
                             The Qt Company Ltd. (BSD-3-Clause)
 
 Package:                    nxp-demo-experience-demos-list
-Release branch:             lf-6.6.36_2.1.0
-Outgoing License:           BSD-2-Clause
+Release branch:             lf-6.12.49_2.2.0
+Outgoing License:           LA_OPT_Online Code Hosting NXP_Software_License - v1.4 May 2025
 License File:               nxp-demo-experience-demos-list/LICENSE.txt
 Package Category:           Configuration
 Type of content:            Scripts, source code, graphics images and data files
-Description and comments:   GoPoint for i.MX Applications Processors configuration and launchers
+Description and comments:   GoPoint for i.MX Application Processors configuration and launchers
 Release Location:           https://github.com/nxp-imx-support/nxp-demo-experience-demos-list
-Origin:                     NXP (BSD-2-Clause, BSD-3-Clause, Apache-2.0)
-                            Font Awesome (CC-BY-4.0) https://fontawesome.com/icons
+Origin:                     NXP (Proprietary, BSD-3-Clause, Apache-2.0)
+                            Patrick Levin (MIT) https://github.com/patlevin/face-detection-tflite
 
 Package:                    nxp-demo-experience-assets
-Release branch:             lf-6.6.36_2.1.0
-Outgoing License:           LA_OPT_NXP_Software_License v57 July 2024 - Additional distribution license granted - Section 2.3 applies
-                            Files may be distributed according to the license noted in the headers or README.md files
+Release branch:             lf-6.12.49_2.2.0
+Outgoing License:           LA_OPT_Online Code Hosting NXP_Software_License - v1.4 May 2025
 License File:               nxp-demo-experience-assets/LICENSE.txt
 Package Category:           Demo application
 Type of content:            Machine learning models, videos, graphics, images, compiled executables
@@ -58,3 +57,19 @@ Origin:                     NXP (propietary)
                             Google LLC (Apache-2.0)
                             FaceRecognition with FaceNet Android Authors (Apache-2.0)
                             MediaPipe (Apache-2.0) https://developers.google.com/mediapipe/solutions
+
+Package:                    nxp-nnstreamer-examples
+Version:                    1.6
+Release branch:             main
+Outgoing License:           BSD-3-Clause
+License File:               nxp-nnstreamer-examples/LICENSE
+Type of content:            Source code, scripts
+Description and comments:   NNStreamer pipeline examples for NXP platforms
+Release Location:           https://github.com/nxp-imx/nxp-nnstreamer-examples
+Origin:                     NXP (BSD-3-Clause)
+Dependencies during runtime:
+                            GStreamer (LGPL-2.1-only) - https://github.com/GStreamer/gstreamer
+                            NNStreamer (LGPL-2.1-only) - https://github.com/nnstreamer/nnstreamer
+
+
+

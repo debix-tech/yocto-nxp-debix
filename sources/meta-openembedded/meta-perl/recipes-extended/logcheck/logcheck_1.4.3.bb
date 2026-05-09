@@ -11,7 +11,7 @@ HOMEPAGE = "http://logcheck.org/"
 LICENSE = "GPL-2.0-only"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=c93c0550bd3173f4504b2cbd8991e50b"
 
-SRC_URI = "${DEBIAN_MIRROR}/main/l/${BPN}/${BPN}_${PV}.tar.xz \
+SRC_URI = "https://snapshot.debian.org/archive/debian/20230718T155737Z/pool/main/l/${BPN}/${BPN}_${PV}.tar.xz \
            file://99_logcheck \
 "
 SRC_URI[sha256sum] = "ad83ae80bd780bdae5eefd40ad59a3e97b85ad3a4962aa7c00d98ed3bdffcdd0"
@@ -49,7 +49,7 @@ do_install() {
     # Don't install /var/lock when populating rootfs. Do it through volatile
     if ${@bb.utils.contains('DISTRO_FEATURES', 'sysvinit', 'true', 'false', d)}; then
         install -d ${D}${sysconfdir}/default/volatiles
-        install -m 0644 ${WORKDIR}/99_logcheck ${D}${sysconfdir}/default/volatiles
+        install -m 0644 ${UNPACKDIR}/99_logcheck ${D}${sysconfdir}/default/volatiles
     fi
     if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
         install -d ${D}${sysconfdir}/tmpfiles.d

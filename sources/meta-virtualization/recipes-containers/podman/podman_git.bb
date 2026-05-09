@@ -10,18 +10,19 @@ inherit features_check
 REQUIRED_DISTRO_FEATURES ?= "seccomp ipv6"
 
 DEPENDS = " \
-    go-metalinter-native \
     gpgme \
     libseccomp \
     ${@bb.utils.filter('DISTRO_FEATURES', 'systemd', d)} \
     gettext-native \
 "
 
-SRCREV = "bb81e85a430fa95d23a15b77c717fd68bf06ebf2"
+SRCREV = "227df90eb7c021097c9ba5f8000c83648a598028"
 SRC_URI = " \
-    git://github.com/containers/libpod.git;branch=v5.0;protocol=https \
+    git://github.com/containers/libpod.git;branch=v5.4;protocol=https;destsuffix=${GO_SRCURI_DESTSUFFIX} \
     ${@bb.utils.contains('PACKAGECONFIG', 'rootless', 'file://50-podman-rootless.conf', '', d)} \
     file://run-ptest \
+    file://CVE-2025-6032.patch;patchdir=src/import \
+    file://CVE-2025-9566.patch;patchdir=src/import \
 "
 
 LICENSE = "Apache-2.0"
@@ -31,7 +32,7 @@ GO_IMPORT = "import"
 
 S = "${WORKDIR}/git"
 
-PV = "5.0.1+git"
+PV = "v5.4.1"
 
 CVE_STATUS[CVE-2022-2989] = "fixed-version: fixed since v4.3.0"
 CVE_STATUS[CVE-2023-0778] = "fixed-version: fixed since v4.5.0"
@@ -46,15 +47,16 @@ ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'systemd', '', d)} \
 exclude_graphdriver_btrfs exclude_graphdriver_devicemapper ${BUILDTAGS_EXTRA}"
 
 # overide LDFLAGS to allow podman to build without: "flag provided but not # defined: -Wl,-O1
-export LDFLAGS=""
+export LDFLAGS = ""
 
 # https://github.com/llvm/llvm-project/issues/53999
 TOOLCHAIN = "gcc"
 
 # podmans Makefile expects BUILDFLAGS to be set but go.bbclass defines them in GOBUILDFLAGS
-export BUILDFLAGS="${GOBUILDFLAGS}"
+export BUILDFLAGS = "${GOBUILDFLAGS}"
 
 inherit go goarch
+inherit container-host
 inherit systemd pkgconfig ptest
 
 do_configure[noexec] = "1"
@@ -65,10 +67,13 @@ EXTRA_OEMAKE = " \
      SYSTEMDDIR=${systemd_unitdir}/system USERSYSTEMDDIR=${systemd_user_unitdir} \
 "
 
-# remove 'docker' from the packageconfig if you don't want podman to
+# remove 'docker' from the features if you don't want podman to
 # build and install the docker wrapper. If docker is enabled in the
-# packageconfig, the podman package will rconfict with docker.
-PACKAGECONFIG ?= "docker"
+# variable, the podman package will rconfict with docker.
+PODMAN_FEATURES ?= "docker"
+
+PACKAGECONFIG ?= ""
+PACKAGECONFIG[rootless] = ",,,fuse-overlayfs slirp4netns,,"
 
 do_compile() {
 	cd ${S}/src
@@ -106,7 +111,7 @@ do_install() {
 	export GOROOT="${STAGING_DIR_NATIVE}/${nonarch_libdir}/${HOST_SYS}/go"
 
 	oe_runmake install DESTDIR="${D}"
-	if ${@bb.utils.contains('PACKAGECONFIG', 'docker', 'true', 'false', d)}; then
+	if ${@bb.utils.contains('PODMAN_FEATURES', 'docker', 'true', 'false', d)}; then
 		oe_runmake install.docker DESTDIR="${D}"
 	fi
 
@@ -116,7 +121,12 @@ do_install() {
 
 	if ${@bb.utils.contains('PACKAGECONFIG', 'rootless', 'true', 'false', d)}; then
 		install -d "${D}${sysconfdir}/sysctl.d"
-		install -m 0644 "${WORKDIR}/50-podman-rootless.conf" "${D}${sysconfdir}/sysctl.d"
+		install -m 0644 "${UNPACKDIR}/50-podman-rootless.conf" "${D}${sysconfdir}/sysctl.d"
+		install -d "${D}${sysconfdir}/containers"
+		cat <<-EOF >> "${D}${sysconfdir}/containers/containers.conf"
+		[NETWORK]
+		default_rootless_network_cmd="slirp4netns"
+		EOF
 	fi
 }
 
@@ -149,8 +159,8 @@ VIRTUAL-RUNTIME_base-utils-nsenter ?= "util-linux-nsenter"
 COMPATIBLE_HOST = "^(?!mips).*"
 
 RDEPENDS:${PN} += "\
-	conmon ${VIRTUAL-RUNTIME_container_runtime} iptables ${VIRTUAL-RUNTIME_container_networking} skopeo ${VIRTUAL-RUNTIME_base-utils-nsenter} \
-	${@bb.utils.contains('PACKAGECONFIG', 'rootless', 'fuse-overlayfs slirp4netns', '', d)} \
+	catatonit conmon ${VIRTUAL-RUNTIME_container_runtime} iptables libdevmapper \
+	${VIRTUAL-RUNTIME_container_dns} ${VIRTUAL-RUNTIME_container_networking} ${VIRTUAL-RUNTIME_base-utils-nsenter} \
 "
 RRECOMMENDS:${PN} += "slirp4netns \
                       kernel-module-xt-masquerade \
@@ -166,11 +176,11 @@ RDEPENDS:${PN}-ptest += " \
 	bash \
 	bats \
 	buildah \
-	catatonit \
 	coreutils \
 	file \
 	gnupg \
 	jq \
 	make \
+	skopeo \
 	tar \
 "

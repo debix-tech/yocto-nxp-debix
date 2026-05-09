@@ -11,26 +11,28 @@ This layer depends on:
 
   URI: git://git.openembedded.org/openembedded-core
   layers: meta
-  branch: scarthgap
+  branch: walnascar
 
   URI: git://git.openembedded.org/meta-openembedded
   layers: meta-oe
-  branch: scarthgap
+  branch: walnascar
 
 Patches
 =======
 
 Please submit any patches against the filesystems layer to the
 OpenEmbedded development mailing list (openembedded-devel@lists.openembedded.org)
-with '[meta-filesystems][scarthgap]' in the subject.
+with '[meta-filesystems][walnascar]' in the subject.
 
-Layer maintainer: Armin Kuster <akuster808@gmail.com>
+Layer maintainer: Gyorgy Sarvari <skandigraun@gmail.com>
+
+Layer maintainer emeritus: Armin Kuster <akuster808@gmail.com>
 
 When sending single patches, please use something like:
 
    git send-email -1 -M \
         --to openembedded-devel@lists.openembedded.org \
-        --subject-prefix='meta-filesystems][scarthgap][PATCH'
+        --subject-prefix='meta-filesystems][walnascar][PATCH'
 
 
 Table of Contents

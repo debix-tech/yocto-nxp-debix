@@ -9,6 +9,8 @@ Signed-off-by: Haoran.Wang <elven.wang@nxp.com>
  arch/arm/configs/imx_v7_defconfig | 137 +++++++++++++++++++++++++++++-
  1 file changed, 135 insertions(+), 2 deletions(-)
 
+Upstream-Status: Inappropriate  [platform specific changes]
+
 diff --git a/arch/arm/configs/imx_v7_defconfig b/arch/arm/configs/imx_v7_defconfig
 index 472dff26b4b3..6843bbfaf5f0 100644
 --- a/arch/arm/configs/imx_v7_defconfig

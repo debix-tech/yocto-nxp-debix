@@ -37,6 +37,8 @@ Change-Id: I13e7c148a1d647269cc5da6001195f84c4005be1
  tools/gplay2/meson.build |  7 +++
  2 files changed, 102 insertions(+)
 
+Upstream-Status: Inappropriate  [platform specific changes]
+
 diff --git a/tools/gplay2/gplay2.c b/tools/gplay2/gplay2.c
 index 9e406b9..6841933 100755
 --- a/tools/gplay2/gplay2.c

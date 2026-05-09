@@ -14,14 +14,15 @@ DEPENDS:append:mx6-nxp-bsp    = " imx-lib"
 DEPENDS:append:mx7-nxp-bsp    = " imx-lib"
 DEPENDS:append:mx8ulp-nxp-bsp = " imx-lib"
 DEPENDS:append:mx93-nxp-bsp   = " imx-lib"
+DEPENDS:append:mx943-nxp-bsp  = " imx-lib"
 
 PE = "1"
 PV = "7.0+${SRCPV}"
 
 SRC_URI = "git://github.com/nxp-imx/imx-test.git;protocol=https;branch=${SRCBRANCH} \
            file://memtool_profile"
-SRCBRANCH = "lf-6.6.3_1.0.0"
-SRCREV = "8a1fa37664a1e470cf86f1185c08e265e4602a9b"
+SRCBRANCH = "lf-6.12.20_2.0.0"
+SRCREV = "38f9cf1f08bb6fcdd6aaf9191e0b53f02e02537b"
 
 S = "${WORKDIR}/git"
 
@@ -40,7 +41,9 @@ PLATFORM:mx7d-nxp-bsp  = "IMX7D"
 PLATFORM:mx7ulp-nxp-bsp = "IMX7D"
 PLATFORM:mx8-nxp-bsp = "IMX8"
 PLATFORM:mx8ulp-nxp-bsp = "IMX8ULP"
+PLATFORM:mx91-nxp-bsp = "IMX8"
 PLATFORM:mx93-nxp-bsp = "IMX8ULP"
+PLATFORM:mx943-nxp-bsp = "IMX8ULP"
 PLATFORM:mx95-nxp-bsp = "IMX8"
 
 PARALLEL_MAKE = "-j 1"
@@ -73,11 +76,11 @@ do_install() {
                PLATFORM=${PLATFORM} \
                install
 
-    if [ -e ${WORKDIR}/clocks.sh ]; then
-        install -m 755 ${WORKDIR}/clocks.sh ${D}/unit_tests/clocks.sh
+    if [ -e ${UNPACKDIR}/clocks.sh ]; then
+        install -m 755 ${UNPACKDIR}/clocks.sh ${D}/unit_tests/clocks.sh
     fi
     install -d -m 0755 ${D}${ROOT_HOME}/
-    install -m 0644 ${WORKDIR}/memtool_profile ${D}${ROOT_HOME}/.profile
+    install -m 0644 ${UNPACKDIR}/memtool_profile ${D}${ROOT_HOME}/.profile
 }
 
 FILES:${PN} += "/unit_tests ${ROOT_HOME}/.profile"

@@ -11,6 +11,8 @@ Signed-off-by: Haoran Wang <elven.wang@nxp.com>
  src/proto/CMakeLists.txt | 10 ++++++++++
  1 file changed, 10 insertions(+)
 
+Upstream-Status: Inappropriate  [platform specific changes]
+
 diff --git a/src/proto/CMakeLists.txt b/src/proto/CMakeLists.txt
 index e982d52aa9..4d19916ac4 100644
 --- a/src/proto/CMakeLists.txt

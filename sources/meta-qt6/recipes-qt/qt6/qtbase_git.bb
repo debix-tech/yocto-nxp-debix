@@ -19,9 +19,11 @@ include recipes-qt/qt6/qt6.inc
 
 SRC_URI += "\
     file://0001-Add-linux-oe-g-platform.patch \
-    file://0002-qlibraryinfo-allow-to-set-qt.conf-from-the-outside-u.patch \
     file://0004-Fix-qt.toolchain.cmake-for-SDK-use.patch \
     file://0005-testlib-don-t-track-the-build-or-source-directories.patch \
+"
+SRC_URI:append:class-native = "\
+    file://0002-qlibraryinfo-allow-to-set-qt.conf-from-the-outside-u.patch \
 "
 
 DEPENDS += "\
@@ -53,8 +55,9 @@ PACKAGECONFIG_GRAPHICS ?= "\
     ${@bb.utils.filter('DISTRO_FEATURES', 'vulkan', d)} \
     ${@bb.utils.filter('DISTRO_FEATURES', 'wayland', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'opengl', \
-        bb.utils.contains('DISTRO_FEATURES', 'x11', 'gl', 'kms gbm gles2 eglfs', d), 'no-opengl linuxfb', d)} \
+        bb.utils.contains('DISTRO_FEATURES', 'x11', 'gl', 'kms gbm gles2 eglfs', d), 'no-opengl', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'directfb', 'directfb', '', d)} \
+    linuxfb \
 "
 PACKAGECONFIG_X11 ?= "${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'xcb', '', d)}"
 PACKAGECONFIG_KDE ?= "${@bb.utils.contains('DISTRO_FEATURES', 'kde', 'sm cups kms gbm sql-sqlite', '', d)}"
@@ -94,8 +97,8 @@ OPENSSL_LINKING_MODE ?= "runtime"
 QT_QPA_DEFAULT_PLATFORM ?= "${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'xcb', \
     bb.utils.contains('PACKAGECONFIG', 'gles2', 'eglfs', 'linuxfb', d), d)}"
 
-# at-spi bridge requires XCB currently
-ACCESSIBILITY_DEPENDS = "${@bb.utils.contains("DISTRO_FEATURES", "x11", "at-spi2-core", "", d)}"
+# at-spi bridge is used by XCB and wayland
+ACCESSIBILITY_DEPENDS = "${@bb.utils.contains_any("DISTRO_FEATURES", "x11 wayland", "at-spi2-core", "", d)}"
 
 PACKAGECONFIG[ltcg] = "-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON,-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF"
 PACKAGECONFIG[optimize-size] = "-DFEATURE_optimize_size=ON,-DFEATURE_optimize_size=OFF"
@@ -116,6 +119,7 @@ PACKAGECONFIG[glib] = "-DFEATURE_glib=ON,-DFEATURE_glib=OFF,glib-2.0"
 PACKAGECONFIG[icu] = "-DFEATURE_icu=ON,-DFEATURE_icu=OFF,icu"
 PACKAGECONFIG[journald] = "-DFEATURE_journald=ON,-DFEATURE_journald=OFF,systemd"
 PACKAGECONFIG[lttng] = "-DFEATURE_lttng=ON,-DFEATURE_lttng=OFF,lttng-ust"
+PACKAGECONFIG[ctf] = "-DFEATURE_ctf=ON,-DFEATURE_ctf=OFF"
 
 # gui
 PACKAGECONFIG[gui] = "-DFEATURE_gui=ON,-DFEATURE_gui=OFF"
@@ -173,6 +177,8 @@ EXTRA_OECMAKE:append:class-target = "\
 
 EXTRA_OECMAKE:append:mingw32 = "\
     -DQT_GENERATE_WRAPPER_SCRIPTS_FOR_ALL_HOSTS=ON \
+    -DFEATURE_stack_protector=OFF \
+    -DFEATURE_dnslookup=OFF \
 "
 
 SYSROOT_DIRS += "${QT6_INSTALL_MKSPECSDIR}"
@@ -191,6 +197,11 @@ do_install:append() {
     rm -f ${D}${QT6_INSTALL_MKSPECSDIR}/features/uikit/device_destinations.sh
     rm -f ${D}${QT6_INSTALL_MKSPECSDIR}/features/data/mac/objc_namespace.sh
 
+    if [ -e ${D}${QT6_INSTALL_EXAMPLESDIR}/corelib/serialization/cbordump/cbortag.py ]; then
+        sed -i ${D}${QT6_INSTALL_EXAMPLESDIR}/corelib/serialization/cbordump/cbortag.py \
+            -e 's|/bin/env|/usr/bin/env|'
+    fi
+
     # remove unneeded files that contains reference to TMPDIR [buildpaths]
     rm -f ${D}${QT6_INSTALL_BINDIR}/host-*
     rm -f ${D}${QT6_INSTALL_BINDIR}/target_qt.conf
@@ -198,13 +209,16 @@ do_install:append() {
     install -d ${D}${datadir}/cmake/OEToolchainConfig.cmake.d
     RELPATH=${@os.path.relpath(d.getVar('prefix'), d.getVar('datadir') + '/cmake/OEToolchainConfig.cmake.d')}
     cat > ${D}${datadir}/cmake/OEToolchainConfig.cmake.d/OEQt6Toolchain.cmake <<EOF
-get_filename_component(QT_HOST_PATH "\${CMAKE_CURRENT_LIST_DIR}/${RELPATH}" ABSOLUTE CACHE)
+get_filename_component(QT_HOST_PATH "\${CMAKE_CURRENT_LIST_DIR}/$RELPATH" ABSOLUTE CACHE)
 set(QT_BUILD_INTERNALS_NO_FORCE_SET_INSTALL_PREFIX ON CACHE BOOL "")
 EOF
 
     RELPATH="${@os.path.relpath(d.getVar('bindir'), d.getVar('QT6_INSTALL_BINDIR'))}"
     sed -i ${D}${QT6_INSTALL_BINDIR}/* \
-        -i ${D}${QT6_INSTALL_LIBEXECDIR}/* \
+        -e "s|cmake_path=${RECIPE_SYSROOT_NATIVE}.*cmake|cmake_path=%script_dir_path%/$RELPATH/cmake.exe|" \
+        -e "s|${RECIPE_SYSROOT_NATIVE}.*cmake|\$script_dir_path/$RELPATH/cmake|"
+    RELPATH="${@os.path.relpath(d.getVar('bindir'), d.getVar('QT6_INSTALL_LIBEXECDIR'))}"
+    sed -i ${D}${QT6_INSTALL_LIBEXECDIR}/* \
         -e "s|cmake_path=${RECIPE_SYSROOT_NATIVE}.*cmake|cmake_path=%script_dir_path%/$RELPATH/cmake.exe|" \
         -e "s|${RECIPE_SYSROOT_NATIVE}.*cmake|\$script_dir_path/$RELPATH/cmake|"
 

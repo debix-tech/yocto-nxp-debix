@@ -1,27 +1,27 @@
-SUMARY = "NNStreamer Examples"
-DESCRIPTION = "Recipe for NNStreamer Examples on i.MX"
+SUMMARY = "NNStreamer Examples"
+DESCRIPTION = "Recipe for i.MX NNStreamer Examples"
 SECTION = "Machine Learning"
 LICENSE = "BSD-3-Clause"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=3d5621953a6b13048ccb5e891b99e00e"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=df2d5c27ffc38b06ea00cd3edc2b4572"
 
 IMX_NNSTREANER_DIR = "${GPNT_APPS_FOLDER}/scripts/machine_learning/nnstreamer"
 
-NXP_IMX_NNSTREANER_SRC ?= "git://github.com/nxp-imx/nxp-nnstreamer-examples.git;protocol=https"
+NXP_NNSTREAMER_EXAMPLES_SRC ?= "git://github.com/nxp-imx/nxp-nnstreamer-examples.git;protocol=https"
 SRCBRANCH = "main"
-SRCREV = "1450073874cf6ef0be85eeca407bb3b0f2b4ba1a"
+SRCREV = "062ebd146f6519c437db6516f257f20d63dda1dd"
 
-SRC_URI = "${NXP_IMX_NNSTREANER_SRC};branch=${SRCBRANCH} \
-	   file://0001-MICRSE-2243-Use-GoPoint-downloads-folder.patch \
-           file://0002-MICRSE-2243-Allow-camera-to-get-swapped-out.patch"
+SRC_URI = "${NXP_NNSTREAMER_EXAMPLES_SRC};branch=${SRCBRANCH}"
 S = "${WORKDIR}/git"
 
 DEPENDS = "\
+        tensorflow-lite \
         glib-2.0 \
         gstreamer1.0 \
         nnstreamer \
 "
 
 RDEPENDS:${PN} = "\
+        tensorflow-lite \
         glib-2.0 \
         gstreamer1.0 \
         nnstreamer \
@@ -35,25 +35,35 @@ EXTRA_OECMAKE = "-DCMAKE_SYSROOT=${PKG_CONFIG_SYSROOT_DIR}"
 do_install() {
     install -d ${D}${IMX_NNSTREANER_DIR}
 
-    install -d ${D}${IMX_NNSTREANER_DIR}/common
-    cp -r ${WORKDIR}/git/common/* ${D}${IMX_NNSTREANER_DIR}/common
     cp ${WORKDIR}/git/LICENSE ${D}${IMX_NNSTREANER_DIR}
-    cp ${WORKDIR}/git/SCR-1.3.txt ${D}${IMX_NNSTREANER_DIR}
+    cp ${WORKDIR}/git/SCR*.txt ${D}${IMX_NNSTREANER_DIR}
 
     install -d ${D}${IMX_NNSTREANER_DIR}/classification
-    cp ${WORKDIR}/git/classification/README.md ${D}${IMX_NNSTREANER_DIR}/classification
-    install -m 0755 ${WORKDIR}/git/classification/classification_utils.sh ${D}${IMX_NNSTREANER_DIR}/classification
-    install -m 0755 ${WORKDIR}/git/classification/example_classification_mobilenet_v1_tflite.sh ${D}${IMX_NNSTREANER_DIR}/classification
     install -m 0755 ${WORKDIR}/build/classification/example_classification_mobilenet_v1_tflite ${D}${IMX_NNSTREANER_DIR}/classification
 
-    install -d ${D}${IMX_NNSTREANER_DIR}/detection
-    cp ${WORKDIR}/git/detection/README.md ${D}${IMX_NNSTREANER_DIR}/detection
-    install -m 0755 ${WORKDIR}/git/detection/detection_utils.sh ${D}${IMX_NNSTREANER_DIR}/detection
-    install -m 0755 ${WORKDIR}/git/detection/example_detection_mobilenet_ssd_v2_tflite.sh ${D}${IMX_NNSTREANER_DIR}/detection
+    install -d ${D}${IMX_NNSTREANER_DIR}/classification_detection
+    install -m 0755 ${WORKDIR}/build/mixed-demos/example_classification_and_detection_tflite ${D}${IMX_NNSTREANER_DIR}/classification_detection
 
-    install -d ${D}${IMX_NNSTREANER_DIR}/pose
-    cp ${WORKDIR}/git/pose/README.md ${D}${IMX_NNSTREANER_DIR}/pose
-    install -m 0755 ${WORKDIR}/git/pose/example_pose_movenet_tflite.py ${D}${IMX_NNSTREANER_DIR}/pose
+    install -d ${D}${IMX_NNSTREANER_DIR}/dual_classification
+    install -m 0755 ${WORKDIR}/build/mixed-demos/example_double_classification_tflite ${D}${IMX_NNSTREANER_DIR}/dual_classification
+
+    install -d ${D}${IMX_NNSTREANER_DIR}/emotion_detection
+    install -m 0755 ${WORKDIR}/build/face-processing/example_emotion_classification_tflite ${D}${IMX_NNSTREANER_DIR}/emotion_detection
+
+    install -d ${D}${IMX_NNSTREANER_DIR}/face_detection
+    install -m 0755 ${WORKDIR}/build/face-processing/example_face_detection_tflite ${D}${IMX_NNSTREANER_DIR}/face_detection
+
+    install -d ${D}${IMX_NNSTREANER_DIR}/object_detection
+    install -m 0755 ${WORKDIR}/build/object-detection/example_detection_mobilenet_ssd_v2_tflite ${D}${IMX_NNSTREANER_DIR}/object_detection
+
+    install -d ${D}${IMX_NNSTREANER_DIR}/pose_estimation
+    install -m 0755 ${WORKDIR}/build/pose-estimation/example_pose_movenet_tflite ${D}${IMX_NNSTREANER_DIR}/pose_estimation
+
+    install -d ${D}${IMX_NNSTREANER_DIR}/pose_face
+    install -m 0755 ${WORKDIR}/build/mixed-demos/example_face_and_pose_detection_tflite ${D}${IMX_NNSTREANER_DIR}/pose_face
+
+    install -d ${D}${IMX_NNSTREANER_DIR}/semantic_segmentation
+    install -m 0755 ${WORKDIR}/build/semantic-segmentation/example_segmentation_deeplab_v3_tflite ${D}${IMX_NNSTREANER_DIR}/semantic_segmentation
     
 }
 

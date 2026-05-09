@@ -1,0 +1,44 @@
+From d4d9f672c0aa22462faa3626d54aa9e9b3c3423a Mon Sep 17 00:00:00 2001
+From: Haoran Wang <elven.wang@nxp.com>
+Date: Sun, 17 Aug 2025 09:21:56 +0800
+Subject: [PATCH] arm64:dts: Add i.MX8MP Trusty OS device tree config
+
+Signed-off-by: Haoran Wang <elven.wang@nxp.com>
+---
+ arch/arm64/boot/dts/freescale/imx8mp-evk.dts | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+Upstream-Status: Inappropriate  [platform specific changes]
+
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
+index 0884958a8d373..c314e1f3801a0 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
+@@ -13,6 +13,24 @@ / {
+ 	model = "NXP i.MX8MPlus EVK board";
+ 	compatible = "fsl,imx8mp-evk", "fsl,imx8mp";
+ 
++	trusty {
++		compatible = "android,trusty-smc-v1";
++		ranges;
++		#address-cells = <2>;
++		#size-cells = <2>;
++		trusty-irq {
++			compatible = "android,trusty-irq-v1";
++			interrupt-ranges = < 0 15 0>;
++			ipi-range = <8 15 8>;
++		};
++		trusty-virtio {
++			compatible = "android,trusty-virtio-v1";
++		};
++		trusty-log {
++			compatible = "android,trusty-log-v1";
++		};
++	};
++
+ 	chosen {
+ 		stdout-path = &uart2;
+ 	};
+-- 
+2.34.1
+

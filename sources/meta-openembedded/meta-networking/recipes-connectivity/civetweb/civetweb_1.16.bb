@@ -8,6 +8,7 @@ SRCREV = "d7ba35bbb649209c66e582d5a0244ba988a15159"
 
 SRC_URI = "git://github.com/civetweb/civetweb.git;branch=master;protocol=https \
            file://0001-Unittest-Link-librt-and-libm-using-l-option.patch \
+           file://0001-Fix-heap-overflow-in-directory-URI-slash-redirection.patch \
            "
 
 S = "${WORKDIR}/git"
@@ -30,7 +31,7 @@ EXTRA_OECMAKE = " \
 # should come from external CMake project)
 OECMAKE_GENERATOR = "Unix Makefiles"
 
-PACKAGECONFIG ??= "caching ipv6 server ssl websockets"
+PACKAGECONFIG ??= "caching ipv6 server ssl websockets cpp"
 PACKAGECONFIG[caching] = "-DCIVETWEB_DISABLE_CACHING=OFF,-DCIVETWEB_DISABLE_CACHING=ON,"
 PACKAGECONFIG[cgi] = "-DCIVETWEB_DISABLE_CGI=OFF,-DCIVETWEB_DISABLE_CGI=ON,"
 PACKAGECONFIG[cpp] = "-DCIVETWEB_ENABLE_CXX=ON,-DCIVETWEB_ENABLE_CXX=OFF,"
@@ -41,8 +42,13 @@ PACKAGECONFIG[ssl] = "-DCIVETWEB_ENABLE_SSL=ON -DCIVETWEB_SSL_OPENSSL_API_1_1=OF
 PACKAGECONFIG[websockets] = "-DCIVETWEB_ENABLE_WEBSOCKETS=ON,-DCIVETWEB_ENABLE_WEBSOCKETS=OFF,"
 
 do_install:append() {
-    sed -i -e 's|${RECIPE_SYSROOT_NATIVE}||g' \
-        -e 's|${RECIPE_SYSROOT}||g' ${D}${libdir}/cmake/civetweb/civetweb-targets.cmake
+    sed -i -e 's|${RECIPE_SYSROOT_NATIVE}|\$\{CMAKE_SYSROOT\}|g' \
+        -e 's|${RECIPE_SYSROOT}|\$\{CMAKE_SYSROOT\}|g' ${D}${libdir}/cmake/civetweb/civetweb-targets.cmake
+}
+
+do_install:append:class-target() {
+    sed -i '/list(APPEND _cmake_import_check_files_for_civetweb::server "\${_IMPORT_PREFIX}\/bin\/civetweb" )/d' \
+        ${D}${libdir}/cmake/civetweb/civetweb-targets-noconfig.cmake
 }
 
 BBCLASSEXTEND = "native"

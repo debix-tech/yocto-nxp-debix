@@ -1,0 +1,3 @@
+meta-nxp-zigbee-rcp/recipes-zigbee-rcp-sdk/files/zigbee-rcp-sdk-IW612-Q2-25-RC3-1.tar
+meta-nxp-matter-advanced/recipes-imx-mkimage/imx-mkimage/files/0001-Add-Trusty-prebuilt-binary-for-project-Matter.patch
+tools/test_attestation/*

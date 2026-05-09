@@ -31,12 +31,12 @@ PROVIDES += " \
 "
 EXTRA_PROVIDES = " \
     ${PROVIDES_OPENCL} \
-    ${PROVIDES_OPENGLES3} \
     ${PROVIDES_OPENVX} \
 "
 EXTRA_PROVIDES:append:imxgpu3d = " \
     virtual/libgles1 \
     virtual/libgles2 \
+    virtual/libgles3 \
 "
 EXTRA_PROVIDES:append:mx8-nxp-bsp = " \
     virtual/libgbm \
@@ -51,9 +51,6 @@ PROVIDES_OPENCL = " \
 PROVIDES_OPENCL:mx7-nxp-bsp   = ""
 PROVIDES_OPENCL:mx8mm-nxp-bsp = ""
 
-PROVIDES_OPENGLES3               = ""
-PROVIDES_OPENGLES3:mx8-nxp-bsp   = "virtual/libgles3"
-
 # Note: OpenVX is fully supported on i.MX 8 QuadMax and 8 QuadPlus.
 # However, only limited support is provided on other i.MX 8 machines
 # as needed for i.MX machine learning packages.
@@ -63,13 +60,18 @@ PROVIDES_OPENVX:mx8mm-nxp-bsp    = ""
 
 RPROVIDES:${PN}:imxgpu3d += "imx-gpu-viv"
 
+RPROVIDES_OPENCL               = "opencl-icd-loader-dev"
+RPROVIDES_OPENCL:mx7-nxp-bsp   = ""
+RPROVIDES_OPENCL:mx8mm-nxp-bsp = ""
+
+RPROVIDES:${PN}:append:imx-nxp-bsp = " ${RPROVIDES_OPENCL}"
+
 PE = "1"
 
 inherit fsl-eula-unpack
 
 FILESEXTRAPATHS:append := "${THISDIR}/imx-gpu-viv:"
-SRC_URI = "${FSL_MIRROR}/${BPN}-${PV}-${IMX_SRCREV_ABBREV}.bin;fsl-eula=true \
-           file://imx_icd.json"
+SRC_URI = "${FSL_MIRROR}/${BPN}-${PV}-${IMX_SRCREV_ABBREV}.bin;fsl-eula=true"
 
 S = "${WORKDIR}/${BPN}-${PV}-${IMX_SRCREV_ABBREV}"
 
@@ -181,8 +183,6 @@ IMX_SOC:mx8mq-nxp-bsp  = "mx8mq"
 IMX_SOC:mx8mn-nxp-bsp  = "mx8mn"
 IMX_SOC:mx8ulp-nxp-bsp = "mx8ulp"
 
-LIBVULKAN_API_VERSION   = "1.3.239"
-
 do_install () {
     install -d ${D}${libdir}
     install -d ${D}${includedir}
@@ -250,8 +250,7 @@ do_install () {
         rm -rf ${D}/opt/viv_samples/cl11
     else
         # Install Vendor ICDs for OpenCL's installable client driver loader (ICDs Loader)
-        install -d ${D}${sysconfdir}/OpenCL/vendors/
-        install -m 0644 ${S}/gpu-core/etc/Vivante.icd ${D}${sysconfdir}/OpenCL/vendors/Vivante.icd
+        install -Dm 0644 ${S}/gpu-core/etc/OpenCL/vendors/Vivante.icd ${D}${sysconfdir}/OpenCL/vendors/Vivante.icd
 
         if [ "${OPENCL_VX_INTRINSIC_EXTENSION_PACKAGES}" = "" ]; then
             rm -f ${D}${includedir}/CL/cl_viv_vx_ext.h
@@ -274,9 +273,8 @@ do_install () {
                 rm -rf ${D}$f
             done
         else
-            install -Dm 0644 ${WORKDIR}/imx_icd.json ${D}${sysconfdir}/vulkan/icd.d/imx_icd.json
-            sed -i "s,%libdir%,${libdir}," ${D}${sysconfdir}/vulkan/icd.d/imx_icd.json
-            sed -i "s,%api_version%,${LIBVULKAN_API_VERSION}," ${D}${sysconfdir}/vulkan/icd.d/imx_icd.json
+            install -Dm 0644 ${S}/gpu-core/etc/vulkan/icd.d/imx_icd.json ${D}${sysconfdir}/vulkan/icd.d/imx_icd.json
+            sed -i "s,/usr/lib,${libdir}," ${D}${sysconfdir}/vulkan/icd.d/imx_icd.json
         fi
     fi
 
@@ -332,7 +330,6 @@ FILES:libegl-imx-dev = "${includedir}/EGL ${includedir}/KHR ${libdir}/pkgconfig/
 INSANE_SKIP:libegl-imx += "dev-so"
 
 FILES:libgal-imx = "${libdir}/libGAL${SOLIBS} ${libdir}/libGAL_egl${SOLIBS}"
-FILES:libgal-imx-dev = "${includedir}/HAL"
 RDEPENDS:libgal-imx += "${@bb.utils.contains('PACKAGECONFIG', 'valgrind', 'valgrind', '', d)}"
 RPROVIDES:libgal-imx += "libgal-imx"
 RRECOMMENDS:libgal-imx += "kernel-module-imx-gpu-viv"
@@ -362,7 +359,7 @@ FILES:libopenvx-imx = " \
     ${libdir}/libArchModelSw${SOLIBS} \
 "
 FILES:libopenvx-imx-dev = "${includedir}/VX ${libdir}/libOpenVX${SOLIBSDEV}"
-RDEPENDS:libopenvx-imx = "libnn-imx ${OPENCL_VX_INTRINSIC_EXTENSION_PACKAGES}"
+RDEPENDS:libopenvx-imx = "${OPENCL_VX_INTRINSIC_EXTENSION_PACKAGES}"
 OPENCL_VX_INTRINSIC_EXTENSION_PACKAGES               = ""
 OPENCL_VX_INTRINSIC_EXTENSION_PACKAGES:mx8qm-nxp-bsp = "libclc-imx libopencl-imx-dev"
 OPENCL_VX_INTRINSIC_EXTENSION_PACKAGES:mx8mp-nxp-bsp = "libclc-imx libopencl-imx-dev"
@@ -393,7 +390,7 @@ FILES:libopencl-imx = "${libdir}/libOpenCL${REALSOLIBS} \
                        ${libdir}/libLLVM_viv${SOLIBS} \
                        ${sysconfdir}/OpenCL/vendors/Vivante.icd"
 FILES:libopencl-imx-dev = "${includedir}/CL ${libdir}/libOpenCL${SOLIBSDEV}"
-RDEPENDS:libopencl-imx= "libclc-imx"
+RDEPENDS:libopencl-imx = "libclc-imx"
 
 FILES:libopenvg-imx = "${libdir}/libOpenVG*${REALSOLIBS} ${libdir}/libOpenVG*${SOLIBS}"
 FILES:libopenvg-imx-dev = "${includedir}/VG ${libdir}/pkgconfig/vg.pc"

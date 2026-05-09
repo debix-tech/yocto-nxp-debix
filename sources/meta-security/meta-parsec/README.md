@@ -112,7 +112,7 @@ You might need to change permissions or add the account into `kvm` unix group.
 
 - Add into your `local.conf`:
 ```
-INHERIT += "testimage"
+IMAGE_CLASSES += "testimage"
 TEST_SUITES = "ping ssh parsec"
 ```
 - Build your image
@@ -129,7 +129,7 @@ bitbake <your-image> -c testimage
 - Add into your `local.conf`:
 ```
 DISTRO_FEATURES += " tpm2"
-INHERIT += "testimage"
+IMAGE_CLASSES += "testimage"
 TEST_SUITES = "ping ssh parsec"
 ```
 - Build security-parsec-image image

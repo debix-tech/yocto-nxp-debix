@@ -8,7 +8,7 @@ DEPENDS += "dtc-native"
 inherit deploy
 
 SRC_URI = "git://github.com/nxp-qoriq/mc-utils;protocol=https;nobranch=1"
-SRCREV = "8efeeac253ff780cbf1382ff40e09436d65e220d"
+SRCREV = "f5c4b2c9d2b1d5122a7d97f236894f87959b3831"
 
 S = "${WORKDIR}/git"
 

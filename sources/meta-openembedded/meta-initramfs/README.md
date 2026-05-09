@@ -12,19 +12,21 @@ Dependencies
 This layer depends on:
 
 URI: git://git.openembedded.org/meta-openembedded
-branch: scarthgap
+branch: walnascar
 
 
 Maintenance
 -----------
 
 Send patches / pull requests to openembedded-devel@lists.openembedded.org
-with '[meta-initramfs][scarthgap]' in the subject.
+with '[meta-initramfs][walnascar]' in the subject.
 
 When sending single patches, please using something like:
-git send-email -M -1 --to openembedded-devel@lists.openembedded.org --subject-prefix='meta-initramfs][scarthgap][PATCH'
+git send-email -M -1 --to openembedded-devel@lists.openembedded.org --subject-prefix='meta-initramfs][walnascar][PATCH'
 
-Interm layer maintainer: Armin Kuster <akuster808@gmail.com>
+Stable layer maintainer: Gyorgy Sarvari <skandigraun@gmail.com>
+
+Layer maintainer emeritus: Armin Kuster <akuster808@gmail.com>
 
 
 License

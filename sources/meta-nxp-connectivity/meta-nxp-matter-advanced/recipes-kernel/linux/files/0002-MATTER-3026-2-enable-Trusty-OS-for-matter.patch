@@ -1,0 +1,47 @@
+From 33fda1fa2d996b01e740400e17be9dd3abd99e1c Mon Sep 17 00:00:00 2001
+From: Ji Luo <ji.luo@nxp.com>
+Date: Thu, 19 Dec 2024 14:09:48 +0800
+Subject: [PATCH 2/2] MATTER-3026-2 enable Trusty OS for matter
+
+Enable Trusty related configs and dts nodes.
+
+Change-Id: I502234f7be9e2b8113b5ef30ea2e3066ef6a9868
+Signed-off-by: Ji Luo <ji.luo@nxp.com>
+---
+ arch/arm64/boot/dts/freescale/imx8mm-evk.dts | 18 ++++++++++++++++++
+ 1 files changed, 18 insertions(+)
+
+Upstream-Status: Inappropriate  [platform specific changes]
+
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk.dts
+index 8bf784ff8ad85..8d53a4851a2ad 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mm-evk.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mm-evk.dts
+@@ -16,6 +16,24 @@ aliases {
+ 		spi0 = &flexspi;
+ 	};
+ 
++	trusty {
++		compatible = "android,trusty-smc-v1";
++		ranges;
++		#address-cells = <2>;
++		#size-cells = <2>;
++		trusty-irq {
++			compatible = "android,trusty-irq-v1";
++			interrupt-ranges = < 0 15 0>;
++			ipi-range = <8 15 8>;
++		};
++		trusty-virtio {
++			compatible = "android,trusty-virtio-v1";
++		};
++		trusty-log {
++			compatible = "android,trusty-log-v1";
++		};
++	};
++
+ 	reg_usdhc1_vmmc: regulator-usdhc1 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "WLAN_EN";
+-- 
+2.34.1
+

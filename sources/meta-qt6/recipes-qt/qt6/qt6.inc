@@ -87,6 +87,7 @@ FILES:${PN}-dev += " \
     ${QT6_INSTALL_LIBDIR}/cmake \
     ${QT6_INSTALL_LIBDIR}/metatypes \
     ${QT6_INSTALL_LIBDIR}/pkgconfig \
+    ${QT6_INSTALL_LIBDIR}/sbom \
     ${QT6_INSTALL_MKSPECSDIR} \
     ${QT6_INSTALL_QMLDIR}/*.qmltypes \
     ${QT6_INSTALL_QMLDIR}/*/*.qmltypes \
@@ -120,9 +121,7 @@ FILES:${PN}-staticdev += " \
     ${QT6_INSTALL_QMLDIR}/*/*/*/*/objects*/ \
 "
 
-# Note: INSTALL_EXAMPLESDIR is not used
 FILES:${PN}-examples = " \
     ${QT6_INSTALL_EXAMPLESDIR} \
-    ${prefix}/examples \
 "
 RDEPENDS:${PN}-examples = "${PN}"

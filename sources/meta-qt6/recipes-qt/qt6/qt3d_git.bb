@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = " \
     file://src/3rdparty/assimp/LICENSE;md5=2119edef0916b0bd511cb3c731076271 \
     file://src/3rdparty/imgui/LICENSE_imstb.txt;md5=2c03212e4ad1f727e9c2251327812596 \
     file://src/3rdparty/imgui/LICENSE_proggyclean.txt;md5=f9db3a4f99ffc4d38de6bb590db15f31 \
-    file://src/3rdparty/imgui/LICENSE.txt;md5=f3c4ae64ab2a23f1b8734609e1a2d48a \
+    file://src/3rdparty/imgui/LICENSE.txt;md5=875a54e93593c8b244ef6b78cacc336e \
 "
 
 inherit qt6-cmake
@@ -26,6 +26,9 @@ ASSIMP_BRANCH = "qt6_assimp"
 SRC_URI += " \
     ${QT_GIT}/${QT_GIT_PROJECT}/qtquick3d-assimp.git;name=qt3d-assimp;branch=${ASSIMP_BRANCH};protocol=${QT_GIT_PROTOCOL};destsuffix=git/src/3rdparty/assimp/src \
 "
+
+# Needed for supporting 64bit off_t
+CFLAGS:append:libc-musl = " -DIOAPI_NO_64 -D_GNU_SOURCE"
 
 DEPENDS = "qtbase qtdeclarative qtdeclarative-native qtshadertools qtshadertools-native"
 

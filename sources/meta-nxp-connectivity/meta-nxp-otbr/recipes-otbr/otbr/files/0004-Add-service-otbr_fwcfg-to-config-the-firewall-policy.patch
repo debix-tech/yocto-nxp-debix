@@ -14,6 +14,8 @@ Signed-off-by: Haoran Wang <elven.wang@nxp.com>
  create mode 100644 tools/reference_device/otbr_fwcfg.service
  create mode 100755 tools/reference_device/otbr_fwcfg.sh
 
+Upstream-Status: Inappropriate  [platform specific changes]
+
 diff --git a/tools/reference_device/CMakeLists.txt b/tools/reference_device/CMakeLists.txt
 index 2f91342cb1..d4bcd76a68 100644
 --- a/tools/reference_device/CMakeLists.txt

@@ -21,19 +21,26 @@ PREFERRED_PROVIDER_virtual/kernel:mx7-nxp-bsp = "linux-imx"
 PREFERRED_PROVIDER_virtual/kernel:mx8-nxp-bsp = "linux-imx"
 PREFERRED_PROVIDER_virtual/kernel:mx9-nxp-bsp = "linux-imx"
 
-PREFERRED_PROVIDER_linux-imx-mfgtool = "linux-imx-mfgtool"
-
 MACHINE_GSTREAMER_1_0_PLUGIN:mx6-nxp-bsp = "imx-gst1.0-plugin"
 MACHINE_GSTREAMER_1_0_PLUGIN:mx7-nxp-bsp = "imx-gst1.0-plugin"
 MACHINE_GSTREAMER_1_0_PLUGIN:mx8-nxp-bsp = "imx-gst1.0-plugin"
 MACHINE_GSTREAMER_1_0_PLUGIN:mx9-nxp-bsp = "imx-gst1.0-plugin"
 
-# Use i.MX Gstreamer Version
-PREFERRED_VERSION_gstreamer1.0              = "1.22.5.imx"
-PREFERRED_VERSION_gstreamer1.0-plugins-base = "1.22.5.imx"
-PREFERRED_VERSION_gstreamer1.0-plugins-good = "1.22.5.imx"
-PREFERRED_VERSION_gstreamer1.0-plugins-bad  = "1.22.5.imx"
 PREFERRED_VERSION_ffmpeg                    = "4.4.1"
+
+# GStreamer forked recipes
+PREFERRED_VERSION_gstreamer1.0              ??= "1.24.7.imx"
+PREFERRED_VERSION_gstreamer1.0-plugins-bad  ??= "1.24.7.imx"
+PREFERRED_VERSION_gstreamer1.0-plugins-base ??= "1.24.7.imx"
+PREFERRED_VERSION_gstreamer1.0-plugins-good ??= "1.24.7.imx"
+
+# GStreamer copied recipes
+PREFERRED_VERSION_gst-devtools              ??= "1.24.0.imx"
+PREFERRED_VERSION_gstreamer1.0-libav        ??= "1.24.0.imx"
+PREFERRED_VERSION_gstreamer1.0-plugins-ugly ??= "1.24.0.imx"
+PREFERRED_VERSION_gstreamer1.0-python       ??= "1.24.0.imx"
+PREFERRED_VERSION_gstreamer1.0-rtsp-server  ??= "1.24.0.imx"
+PREFERRED_VERSION_gstreamer1.0-vaapi        ??= "1.24.0.imx"
 
 # Enable allow-autospawn-for-root as default
 PACKAGECONFIG:append:pn-pulseaudio = " autospawn-for-root"

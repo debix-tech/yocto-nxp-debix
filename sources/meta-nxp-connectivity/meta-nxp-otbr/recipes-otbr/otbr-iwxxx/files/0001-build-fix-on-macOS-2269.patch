@@ -1,0 +1,28 @@
+From e916bcb6ef7d504c4442bb887c201cfb6d76b9d8 Mon Sep 17 00:00:00 2001
+From: Yakun Xu <xyk@google.com>
+Date: Wed, 1 May 2024 00:01:32 +0800
+Subject: [PATCH] [build] fix on macOS (#2269)
+
+boost::filesystem::extension() is deprecated in new boost versions
+---
+ src/web/web-service/web_server.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Upstream-Status: Inappropriate  [platform specific changes]
+
+diff --git a/src/web/web-service/web_server.cpp b/src/web/web-service/web_server.cpp
+index 08cef0ebff5..ff823748788 100644
+--- a/src/web/web-service/web_server.cpp
++++ b/src/web/web-service/web_server.cpp
+@@ -239,7 +239,7 @@ void WebServer::DefaultHttpResponse(void)
+ 
+             auto ifs = std::make_shared<std::ifstream>();
+             ifs->open(path.string(), std::ifstream::in | std::ios::binary | std::ios::ate);
+-            std::string extension = boost::filesystem::extension(path.string());
++            std::string extension = path.extension().string();
+             std::string header    = "";
+             if (extension == ".css")
+             {
+-- 
+2.34.1
+

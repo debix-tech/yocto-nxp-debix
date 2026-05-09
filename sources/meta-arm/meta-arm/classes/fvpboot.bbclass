@@ -24,16 +24,14 @@ FVP_CONSOLES[default] ?= "${FVP_CONSOLE}"
 # Arbitrary extra arguments
 FVP_EXTRA_ARGS ?= ""
 # Bitbake variables to pass to the FVP environment
-FVP_ENV_PASSTHROUGH ?= "FASTSIM_DISABLE_TA ARMLMD_LICENSE_FILE"
+FVP_ENV_PASSTHROUGH ?= "ARMLMD_LICENSE_FILE"
 FVP_ENV_PASSTHROUGH[vardeps] = "${FVP_ENV_PASSTHROUGH}"
-# Disable timing annotation by default
-FASTSIM_DISABLE_TA ?= "1"
 
 EXTRA_IMAGEDEPENDS += "${FVP_PROVIDER}"
 
 IMAGE_CLASSES += "image-artifact-names"
 
-IMAGE_POSTPROCESS_COMMAND += "do_write_fvpboot_conf;"
+IMAGE_POSTPROCESS_COMMAND += "do_write_fvpboot_conf"
 python do_write_fvpboot_conf() {
     # Note that currently this JSON file is in development and the format may
     # change at any point, so it should always be used with a matching runfvp.

@@ -49,6 +49,8 @@ Signed-off-by: Haoran Wang <elven.wang@nxp.com>
  create mode 100644 src/web/web-service/prebuilt_frontend/frontend/res/js/d3.min.js
  create mode 100644 src/web/web-service/prebuilt_frontend/frontend/res/js/material.min.js
 
+Upstream-Status: Inappropriate  [platform specific changes]
+
 diff --git a/src/web/web-service/frontend/CMakeLists.txt b/src/web/web-service/frontend/CMakeLists.txt
 index a6cced2f54..064c5f5e49 100644
 --- a/src/web/web-service/frontend/CMakeLists.txt

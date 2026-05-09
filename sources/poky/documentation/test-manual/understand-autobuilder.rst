@@ -10,7 +10,7 @@ Execution Flow within the Autobuilder
 The "a-full" and "a-quick" targets are the usual entry points into the
 Autobuilder and it makes sense to follow the process through the system
 starting there. This is best visualized from the :yocto_ab:`Autobuilder
-Console view </typhoon/#/console>`.
+Console view </valkyrie/#/console>`.
 
 Each item along the top of that view represents some "target build" and
 these targets are all run in parallel. The 'full' build will trigger the
@@ -183,6 +183,12 @@ The Workers are all connected over NFS which allows the ``sstate``
 directory to be shared between them. This means once a Worker has built
 an artifact, all the others can benefit from it. The usage of the directory
 within the build system is designed for sharing over NFS.
+
+Shared Hash Equivalence Server
+------------------------------
+
+The Workers all use the same Hash Equivalence server, through a common
+definition for :term:`BB_HASHSERVE`.
 
 Resulttool
 ----------

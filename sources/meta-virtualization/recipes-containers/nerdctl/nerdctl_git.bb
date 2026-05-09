@@ -10,15 +10,16 @@ DEPENDS = " \
 "
 
 # Specify the first two important SRCREVs as the format
-SRCREV_FORMAT="nerdcli_cgroups"
-SRCREV_nerdcli = "265d6b9cf526ce7d9ed8d34a0e3c3066901cc463"
+SRCREV_FORMAT = "nerdcli_cgroups"
+SRCREV_nerdcli = "497c7cf74d09bf1ddf2678382360ca61e6faebac"
 
-SRC_URI = "git://github.com/containerd/nerdctl.git;name=nerdcli;branch=main;protocol=https"
+SRC_URI = "git://github.com/containerd/nerdctl.git;name=nerdcli;branch=main;protocol=https;destsuffix=${GO_SRCURI_DESTSUFFIX}"
 
 include src_uri.inc
 
 # patches and config
-SRC_URI += "file://0001-Makefile-allow-external-specification-of-build-setti.patch \
+SRC_URI += " \
+            file://0001-Makefile-allow-external-specification-of-build-setti.patch \
             file://modules.txt \
            "
 
@@ -27,9 +28,9 @@ LIC_FILES_CHKSUM = "file://src/import/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd
 
 GO_IMPORT = "import"
 
-# S = "${WORKDIR}/git"
+S = "${WORKDIR}/git"
 
-PV = "v2.0.0-beta.1"
+PV = "v2.0.3"
 
 NERDCTL_PKG = "github.com/containerd/nerdctl"
 
@@ -69,7 +70,7 @@ do_compile() {
 	# our copied .go files are to be used for the build
 	ln -sf vendor.copy vendor
 	# inform go that we know what we are doing
-	cp ${WORKDIR}/modules.txt vendor/
+	cp ${UNPACKDIR}/modules.txt vendor/
 
 	oe_runmake GO=${GO} BUILDTAGS="${BUILDTAGS}" binaries
 }

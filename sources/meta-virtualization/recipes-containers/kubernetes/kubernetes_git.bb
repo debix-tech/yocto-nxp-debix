@@ -5,16 +5,16 @@ applications across multiple hosts, providing basic mechanisms for deployment, \
 maintenance, and scaling of applications. \
 "
 
-PV = "v1.29.1+git${SRCREV_kubernetes}"
-CVE_VERSION = "1.29.1"
-SRCREV_kubernetes = "a02da633101bd7919153dd56412b09221c0139bf"
+PV = "v1.32.6+git"
+CVE_VERSION = "1.32.6"
+SRCREV_kubernetes = "036f7ed3f1f4a2d97a654269a98ad7be7d460db6"
 SRCREV_kubernetes-release = "21382abdbfa8e6a43fd417306fa649cb651cc06e"
 PE = "1"
 
 BBCLASSEXTEND = "devupstream:target"
 LIC_FILES_CHKSUM:class-devupstream = "file://LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57"
 DEFAULT_PREFERENCE:class-devupstream = "-1"
-SRC_URI:class-devupstream = "git://github.com/kubernetes/kubernetes.git;branch=release-1.29;name=kubernetes;protocol=https \
+SRC_URI:class-devupstream = "git://github.com/kubernetes/kubernetes.git;branch=release-1.32;name=kubernetes;protocol=https \
                              git://github.com/kubernetes/release;branch=master;name=kubernetes-release;destsuffix=git/release;protocol=https \
                             "
 SRCREV_kubernetes:class-devupstream = "e3b5e621f07f0fee298f641ebded61b8f393fe27"
@@ -23,7 +23,7 @@ PV:class-devupstream = "v1.28.2+git${SRCREV_kubernetes}"
 
 SRCREV_FORMAT ?= "kubernetes_release"
 
-SRC_URI = "git://github.com/kubernetes/kubernetes.git;branch=release-1.29;name=kubernetes;protocol=https;destsuffix=git/src/github.com/kubernetes/kubernetes \
+SRC_URI = "git://github.com/kubernetes/kubernetes.git;branch=release-1.32;name=kubernetes;protocol=https;destsuffix=git/src/github.com/kubernetes/kubernetes \
            git://github.com/kubernetes/release;branch=master;name=kubernetes-release;destsuffix=git/release;protocol=https"
 
 SRC_URI:append = " \
@@ -31,7 +31,7 @@ SRC_URI:append = " \
            file://0001-cross-don-t-build-tests-by-default.patch \
            file://0001-build-golang.sh-convert-remaining-go-calls-to-use.patch \
            file://0001-build-hack-allow-go-1.20-building.patch \
-           file://cni-containerd-net.conflist \
+           file://00_cni-containerd-net.conflist \
            file://k8s-init \
            file://99-kubernetes.conf \
           "
@@ -112,14 +112,14 @@ do_install() {
 
     if ${@bb.utils.contains('DISTRO_FEATURES','systemd','true','false',d)}; then
 	install -d "${D}${BIN_PREFIX}${base_bindir}"
-	install -m 755 "${WORKDIR}/k8s-init" "${D}${BIN_PREFIX}${base_bindir}"
+	install -m 755 "${UNPACKDIR}/k8s-init" "${D}${BIN_PREFIX}${base_bindir}"
 
 	install -d ${D}${sysconfdir}/sysctl.d
-	install -m 0644 "${WORKDIR}/99-kubernetes.conf" "${D}${sysconfdir}/sysctl.d"
+	install -m 0644 "${UNPACKDIR}/99-kubernetes.conf" "${D}${sysconfdir}/sysctl.d"
     fi
 }
 
-CNI_NETWORKING_FILES ?= "${WORKDIR}/cni-containerd-net.conflist"
+CNI_NETWORKING_FILES ?= "${UNPACKDIR}/00_cni-containerd-net.conflist"
 
 PACKAGES =+ "kubeadm kubectl kubelet kube-proxy ${PN}-misc ${PN}-host"
 

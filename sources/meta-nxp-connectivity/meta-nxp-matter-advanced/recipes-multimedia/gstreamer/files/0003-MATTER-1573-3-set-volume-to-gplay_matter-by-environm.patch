@@ -15,6 +15,8 @@ Change-Id: I2b2ba22d366161da6b546befe56512555578f612
  tools/gplay2/gplay_matter.service |  2 +-
  2 files changed, 13 insertions(+), 1 deletion(-)
 
+Upstream-Status: Inappropriate  [platform specific changes]
+
 diff --git a/tools/gplay2/gplay2.c b/tools/gplay2/gplay2.c
 index 6841933..31cfd98 100755
 --- a/tools/gplay2/gplay2.c

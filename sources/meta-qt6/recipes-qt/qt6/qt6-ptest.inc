@@ -28,6 +28,7 @@ EOF
         -DPython3_EXECUTABLE=${PYTHON} \
         ${EXTRA_OECMAKE} \
         -DQT_BUILD_STANDALONE_TESTS=ON \
+        -DQT_BUILD_EXAMPLES=OFF \
         -DQT_ADDITIONAL_PACKAGES_PREFIX_PATH=${D}${QT6_INSTALL_LIBDIR}/cmake \
         -DCMAKE_STAGING_PREFIX=${D}${prefix} \
         -DCMAKE_SKIP_RPATH=ON \
@@ -40,12 +41,13 @@ EOF
     do
         if [ -e "${B_PTEST}/tests/$tests" ]; then
             install -d ${D}${PTEST_PATH}/tests
-            cp -r ${B_PTEST}/tests/$tests ${D}${PTEST_PATH}/tests
-
-            # remove build files
-            find ${D}${PTEST_PATH}/tests/$tests \
-                \( -wholename "*/.*" -o -wholename "*autogen*" -o -iwholename "*cmake*" -o -name Makefile \) \
-                -delete
+            find ${B_PTEST}/tests/$tests ! -type d -a \( \
+                    -executable -o \
+                    -name qmldir -o \
+                    -name *.rcc \
+                \) -exec sh -c '\
+                    install -D "$1" "${D}${PTEST_PATH}${1#${B_PTEST}}" \
+                ' _ {} \;
 
             # tests may depend on files from sources
             cp -r ${S}/tests/$tests ${D}${PTEST_PATH}/tests

@@ -22,12 +22,12 @@ RDEPENDS:${PN} = " \
 "
 
 SRC_URI = " \
-    git://github.com/containers/skopeo;branch=release-1.14;protocol=https;destsuffix=git/src/github.com/containers/skopeo \
+    git://github.com/containers/skopeo;branch=main;protocol=https;destsuffix=git/src/github.com/containers/skopeo \
     file://0001-makefile-add-GOBUILDFLAGS-to-go-build-call.patch \
 "
 
-SRCREV = "1c2ab995059dd011aad74e2c37305d636ebd2675"
-PV = "v1.14.2+git"
+SRCREV = "e8d9f916e04364c128a939535889dc2da74162b5"
+PV = "v1.18.0+git"
 GO_IMPORT = "import"
 
 S = "${WORKDIR}/git/src/github.com/containers/skopeo"
@@ -43,7 +43,7 @@ CVE_STATUS[CVE-2019-10214] = "fixed-version: This CVE was fixed in the container
 
 # This disables seccomp and apparmor, which are on by default in the
 # go package. 
-EXTRA_OEMAKE="BUILDTAGS=''"
+EXTRA_OEMAKE = "BUILDTAGS=''"
 
 do_compile() {
 	export GOARCH="${TARGET_GOARCH}"

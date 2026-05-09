@@ -34,9 +34,16 @@ SOC_TOOLS_TEST_VIVANTE:mx6-nxp-bsp = "imx-gpu-viv-demos"
 SOC_TOOLS_TEST_VIVANTE:mx7-nxp-bsp = "imx-gpu-viv-demos"
 SOC_TOOLS_TEST_VIVANTE:mx8-nxp-bsp = "imx-gpu-viv-demos"
 
+WLAN_SDK_TOOLS = "nxp-wlan-apps"
+WLAN_SDK_TOOLS:mx6-nxp-bsp = ""
+WLAN_SDK_TOOLS:mx7-nxp-bsp = ""
+
 RDEPENDS:${PN} += " \
     bridge-utils \
     can-utils \
+    can-utils-access \
+    can-utils-cantest \
+    can-utils-slcan \
     coreutils \
     cpufrequtils \
     cryptodev-module \
@@ -64,12 +71,19 @@ RDEPENDS:${PN} += " \
     tmux \
     udev-extraconf \
     vlan \
+    ${WLAN_SDK_TOOLS} \
     zstd \
     ${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'tk', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'wayland', 'weston-examples', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'wifi', 'hostapd sigma-dut', '', d)} \
 "
 
-RDEPENDS_DPDK ?= "dpdk ${RDEPENDS_DPDK_FPR}"
+RDEPENDS_DPDK ?= "dpdk ${RDEPENDS_DPDK_FPR} ${RDEPENDS_MTCP_DPDK}"
 RDEPENDS_DPDK_FPR = ""
+RDEPENDS_DPDK_FPR:mx93-nxp-bsp = "dpdk-fpr"
+RDEPENDS_DPDK_FPR:mx943-nxp-bsp = "dpdk-fpr"
 RDEPENDS_DPDK_FPR:mx95-nxp-bsp = "dpdk-fpr"
+
+RDEPENDS_MTCP_DPDK = ""
+RDEPENDS_MTCP_DPDK:mx943-nxp-bsp = "mtcp-dpdk"
+RDEPENDS_MTCP_DPDK:mx95-nxp-bsp = "mtcp-dpdk"

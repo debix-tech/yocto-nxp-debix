@@ -12,6 +12,8 @@ Change-Id: I25ce159abfab7d8770a64df38fa664524e219010
  tools/gplay2/gplay2.c | 1 +
  1 file changed, 1 insertion(+)
 
+Upstream-Status: Inappropriate  [platform specific changes]
+
 diff --git a/tools/gplay2/gplay2.c b/tools/gplay2/gplay2.c
 index 31cfd98..72a373a 100755
 --- a/tools/gplay2/gplay2.c

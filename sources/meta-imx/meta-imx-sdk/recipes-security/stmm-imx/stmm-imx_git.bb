@@ -1,5 +1,5 @@
 # NXP i.MX StandAlomeMM build
-require edk2-firmware_202202.bb
+require edk2-firmware_202505.bb
 SUMMARY = "i.MX StandAlomeMM binary produced by EDK2"
 DESCRIPTION = "StandAlomeMM is a PE/COFF binary produced by EDK2 for i.MX platforms"
 
@@ -9,7 +9,7 @@ PROVIDES:remove:imx-nxp-bsp = "virtual/bootloader"
 SRC_URI:append:imx-nxp-bsp = " file://iMXStandaloneMmRpmb.dsc"
 
 EDK2_PLATFORM:imx-nxp-bsp = "MmStandaloneRpmb"
-EDK2_PLATFORM_DSC:imx-nxp-bsp = "../../iMXStandaloneMmRpmb.dsc"
+EDK2_PLATFORM_DSC:imx-nxp-bsp = "${UNPACKDIR}/iMXStandaloneMmRpmb.dsc"
 EDK2_BIN_NAME:imx-nxp-bsp = "BL32_AP_MM.fd"
 
 do_install:imx-nxp-bsp() {

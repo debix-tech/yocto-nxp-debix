@@ -61,7 +61,9 @@ PACKAGECONFIG:append:imxpxp           = " pxp"
 # former is not available pre-5.6. Out of the dma-heaps, we
 # pick the uncached one by default (see above).
 PACKAGECONFIG:append:mx8-nxp-bsp      = " dma-heap-uncached"
-PACKAGECONFIG:append:mx8m-nxp-bsp     = " dwl"
+PACKAGECONFIG:append:mx8mq-nxp-bsp     = " dwl"
+PACKAGECONFIG:append:mx8mm-nxp-bsp     = " dwl"
+PACKAGECONFIG:append:mx8mp-nxp-bsp     = " dwl"
 
 HANTRO_CONF = "--hantro-headers-path=${STAGING_INCDIR}/hantro_dec --hantro-decoder-version=G2"
 
@@ -82,7 +84,7 @@ PACKAGECONFIG[dma-heap-uncached] = "--with-dma-heap-allocator=yes ${UNCACHED_DMA
 # Using do_install_ptest_base instead of do_install_ptest, since
 # the default do_install_ptest_base is hardcoded to expect Makefiles.
 do_install_ptest_base() {
-    install -D ${WORKDIR}/run-ptest ${D}${PTEST_PATH}/run-ptest
+    install -D ${UNPACKDIR}/run-ptest ${D}${PTEST_PATH}/run-ptest
     install -m 0755 ${B}/test-alloc ${D}${PTEST_PATH}
 }
 

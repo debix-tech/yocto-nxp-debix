@@ -12,28 +12,24 @@
 # By default this script does nothing.
 
 # Set THP as madvise mode
-#if [ -e /sys/kernel/mm/transparent_hugepage/enabled ]
-#then
-#    echo madvise >/sys/kernel/mm/transparent_hugepage/enabled
-#fi
+if [ -e /sys/kernel/mm/transparent_hugepage/enabled ]
+then
+    echo madvise >/sys/kernel/mm/transparent_hugepage/enabled
+fi
 
 # Set min_free_kbyte to avoid kernel dump from eth for 4K video playback use case
-#echo 30000 >  /proc/sys/vm/min_free_kbytes
-#if [ -f /sys/devices/soc0/soc_id ]
-#then
-#    CPUREV=$(cat /sys/devices/soc0/soc_id)
-#    if [ $CPUREV == "i.MX8QM" ] || [ $CPUREV == "i.MX8QXP" ] || [ $CPUREV == "i.MX8MQ" ]
-#    then
-#        echo 80000 >  /proc/sys/vm/min_free_kbytes
-#    fi
-#fi
+echo 30000 >  /proc/sys/vm/min_free_kbytes
+if [ -f /sys/devices/soc0/soc_id ]
+then
+    CPUREV=$(cat /sys/devices/soc0/soc_id)
+    if [ $CPUREV == "i.MX8QM" ] || [ $CPUREV == "i.MX8QXP" ] || [ $CPUREV == "i.MX8MQ" ]
+    then
+        echo 80000 >  /proc/sys/vm/min_free_kbytes
+    fi
+fi
 
 # set printk to 7 to dump kernel message to console
-echo 1 > /proc/sys/kernel/printk
-if [ -e /usr/local/polyhex/bin/polyhex_script ]
-then
-    /usr/local/polyhex/bin/polyhex_script &
-fi
+echo 7 > /proc/sys/kernel/printk
 
 exit 0
 

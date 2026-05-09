@@ -57,24 +57,34 @@ def find_chromium_licenses(chromium_root):
     # Make sure the main Chromium LICENSE file is always present.
     license_files = set([os.path.join(chromium_root, 'LICENSE')])
 
-    for d in licenses.FindThirdPartyDirs(licenses.PRUNE_PATHS, chromium_root):
+    for d in licenses.FindThirdPartyDirs(chromium_root):
         if d in SKIPPED_DIRECTORIES:
             continue
+
+        errors = []
         try:
-            metadata = licenses.ParseDir(d, chromium_root)
+            metadata_list, errors = licenses.ParseDir(d, chromium_root)
         except licenses.LicenseError as e:
-            print('Exception in directory %s: %s' % (d, e))
-            if input('Ignore (y)? ') == 'y':
-                continue
-            raise
-        # buildtools/third_party directories don't have metadata.
-        if metadata == {}:
+            errors.append(str(e))
+
+        if len(errors) != 0:
+            # In M122, changes to the upstream script have resulted in a huge
+            # mass of errors. Going through all of them isn't feasible, so we
+            # just print them for now.
+            e = "'" + "', '".join(error.strip() for error in errors) + "'"
+            print('Exception(s) in directory %s: %s' % (d, e))
             continue
-        # We are not interested in licenses for projects that are not marked as
-        # used in the final product (ie. they might be optional development
-        # aids, or only used in a build).
-        if metadata['Shipped'] == licenses.YES:
-            license_files.update(set(metadata['License File']))
+
+            # if input('Ignore (y)? ') == 'y':
+            #     continue
+            # raise Exception(e)
+
+        for metadata in metadata_list:
+            # We are not interested in licenses for projects that are not marked as
+            # used in the final product (ie. they might be optional development
+            # aids, or only used in a build).
+            if metadata['Shipped'] == licenses.YES:
+                license_files.update(set(metadata['License File']))
     return license_files
 
 

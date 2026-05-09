@@ -13,11 +13,11 @@ The meta-python layer depends on:
 
 	URI: git://git.openembedded.org/openembedded-core
 	layers: meta
-	branch: scarthgap
+	branch: walnascar
 
 	URI: git://git.openembedded.org/meta-openembedded
 	layers: meta-oe
-	branch: scarthgap
+	branch: walnascar
 
 Contributing
 -------------------------
@@ -28,12 +28,14 @@ comments and patch review. It is subscriber only, so please register
 before posting.
 
 Send pull requests to openembedded-devel@lists.openembedded.org with
-'[meta-python][scarthgap]' in the subject.
+'[meta-python][walnascar]' in the subject.
 
 When sending single patches, please use something like:
-git send-email -M -1 --to=openembedded-devel@lists.openembedded.org --subject-prefix='meta-python][scarthgap][PATCH'
+git send-email -M -1 --to=openembedded-devel@lists.openembedded.org --subject-prefix='meta-python][walnascar][PATCH'
 
 Maintenance
 -------------------------
 
-Layer maintainers: Armin Kuster <akuster808@gmail.com>
+Layer maintainers: Gyorgy Sarvari <skandigraun@gmail.com>
+
+Layer maintainer emeritus: Armin Kuster <akuster808@gmail.com>

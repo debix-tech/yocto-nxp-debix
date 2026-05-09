@@ -27,9 +27,10 @@ import argparse
 from collections import OrderedDict
 import subprocess
 import textwrap
+import re
 
 # This switch is used to make this script error out ASAP, mainly for debugging purpose
-ERROR_OUT_ON_FETCH_AND_CHECKOUT_FAILURE = True
+ERROR_OUT_ON_FETCH_AND_CHECKOUT_FAILURE = False
 
 logger = logging.getLogger('oe-go-mod-autogen')
 loggerhandler = logging.StreamHandler()
@@ -104,11 +105,11 @@ class GoModTool(object):
         # check if this repo needs autogen
         repo_url, repo_dest_dir, repo_fullrev = self.modules_repoinfo[self.repo.split('://')[1]]
         if os.path.isdir(os.path.join(repo_dest_dir, 'vendor')):
-            logger.info("vendor direcotry has already existed for %s, no need to add other repos" % self.repo)
+            logger.info("vendor directory already exists for %s, no need to add other repos" % self.repo)
             return
         go_mod_file = os.path.join(repo_dest_dir, 'go.mod')
         if not os.path.exists(go_mod_file):
-            logger.info("go.mod file does not exist for %s, no need to add otehr repos" % self.repo)
+            logger.info("go.mod file does not exist for %s, no need to add other repos" % self.repo)
             return
         self.parse_go_mod(go_mod_file)
         self.show_go_mod_info()
@@ -256,6 +257,7 @@ class GoModTool(object):
             self.modules_repoinfo[module_name] = (repo_url, repo_dest_dir, requiredrev)
         else:
             logger.warning("Failed to get requiredrev, repo_url = %s, rev = %s, module_name = %s" % (repo_url, rev, module_name))
+            return None
 
     def parse_go_mod(self, go_mod_path):
         """
@@ -302,12 +304,19 @@ class GoModTool(object):
         # with the version 'v0.5.5-0.20211029085301-ec551be6f75c'.
         # So the destdir is vendor/github.com/hashicorp/golang-lru while the contents are from github.com/ktock/golang-lru
         for line in self.replace_lines:
-            orig_module, actual = line.split('=>')
-            actual_module, actual_version = actual.split()
-            orig_module = orig_module.strip()
-            actual_module = actual_module.strip()
-            actual_version = actual_version.strip()
-            self.modules_replace[orig_module] = (actual_module, actual_version)
+            try:
+                orig_module, actual = line.split('=>')
+                print( f"replace line: orig: {orig_module} actual_version: {actual}")
+                actual_module, actual_version = actual.split()
+                print( f"replace line: actual: {actual_module} actual_version: {actual_version}")
+                orig_module = orig_module.strip()
+                actual_module = actual_module.strip()
+                actual_version = actual_version.strip()
+                self.modules_replace[orig_module] = (actual_module, actual_version)
+            except Exception as e:
+                print( f"exception {e} caught while parsing, ignoring line: {line}")
+                # sys.exit(1)
+                continue
         #
         # Typical require lines are as below:
         #   github.com/Masterminds/semver/v3 v3.1.1
@@ -336,9 +345,13 @@ class GoModTool(object):
         # destdir: ${WORKDIR}/${BP}/src/import/vendor.fetch/github.com/Masterminds/semver/v3
         # fullsrcrev: 7bb0c843b53d6ad21a3f619cb22c4b442bb3ef3e (git rev-list -1 v3.1.1)
         #
-        # As a last resort, if the last component of <module_name> matches 'v[0-9]+',
+        # Next, if the last component of <module_name> matches 'v[0-9]+',
         # remove the last component and try wget https://<module_name_with_last_component_removed>?go-get=1,
         # then try using the above matching method.
+        #
+        # Finally, we have a mapping of known modules to source trees that can
+        # be used to translate the go.mod entry to a repository. Currently this is
+        # part of the script, but could be read from .map files in the future.
         #
         for line in self.require_lines:
             module_name, version = line.strip().split()
@@ -410,6 +423,10 @@ class GoModTool(object):
                         if newline != '' and not newline.startswith('<'):
                             repo_url = newline
                             repo_url_found = True
+                            if "Repository URL not available" in repo_url:
+                                repo_url_found = False
+                                repo_url = ""
+
                             break
             if repo_url_found:
                 logger.info("repo url for %s: %s" % (module_name, repo_url))
@@ -419,11 +436,62 @@ class GoModTool(object):
             else:
                 unhandled_reason = 'cannot determine repo_url for %s' % module_name
                 self.modules_unhandled[module_name] = unhandled_reason
-                return None
+                # This used to return, but we have the mapping step below to try
+                # as a final resort, leaving this here in case compatiblity issues
+                # arrive later due to the continued processing.
+                # return None
         except:
             logger.info("wget -O %s https://pkg.go.dev/%s failed" % (wget_content_file, module_name))
+
+        # Do we recognize this twice failed lookup ?
+        site_mapper = { "inet.af" : { "match"   : re.compile(""),
+                                      "replace" : ""
+                                    }
+                      }
+
+        # module name: inet.af/tcpproxy
+        # replacement: https://github.com/inetaf/tcpproxy
+        site_mapper["inet.af"]["match"] = re.compile(r"(inet\.af)/(.*)")
+        site_mapper["inet.af"]["replace"] = "https://github.com/inetaf/\\g<2>"
+
+        host, _, _ = module_name.partition('/')
+
+        ## on failure, we could consider instructing the user to write their
+        ## own url into the repo_url_cache file
+        ##
+        ## or we could look for a .repo_mapping file, and read/use it to do
+        ## the mapping and carry that around per-project.
+        logger.info( "trying mapper lookup for %s (host: %s)" % (module_name,host))
+
+        try:
+            mapper = site_mapper[host]
+            m = mapper["match"].match(module_name)
+            repo_url = m.expand( mapper["replace"] )
+
+            logger.info( "mapper match for %s, returning %s" % (module_name,repo_url) )
+            #print( "new site: %s" % repo_url )
+
+            # clear any potentially staged reasons for failures above
+            self.modules_unhandled[module_name] = ""
+
+            with open(url_cache_file, 'w') as f:
+                f.write(repo_url)
+                return repo_url
+        except Exception as e:
+            unhandled_reason = 'cannot determine mapped repo_url for %s' % module_name
+            ### XXXX: TODO. if there are more parts to be popped, we shouldn't give up
+            ###       on th emodule
+            ####
+            #### and/ or check if there was already an entry from above, since that means
+            #### there was a more critcal error during the check and we should just
+            #### propagate the unhandled to the caller
+            ####
+            self.modules_unhandled[module_name] = unhandled_reason
+            del self.modules_unhandled[module_name]
+            logger.info( "no mapper match, returning none: %s" % e )
             return None
 
+        return None
 
     def get_repo_url_rev(self, module_name, version):
         """
@@ -499,10 +567,11 @@ class GoModTool(object):
         src_uri_inc_file = os.path.join(self.workdir, 'src_uri.inc')
         # record the <name> after writting SRCREV_<name>, this is to avoid modules having the same basename resulting in same SRCREV_xxx
         srcrev_name_recorded = []
-        template = """#       %s %s
-# [1] git ls-remote %s %s
-SRCREV_%s="%s"
-SRC_URI += "git://%s;name=%s;protocol=https;nobranch=1;destsuffix=${WORKDIR}/${BP}/src/import/vendor.fetch/%s"
+        # pre styhead releases
+        # SRC_URI += "git://%s;name=%s;protocol=https;nobranch=1;destsuffix=${WORKDIR}/${BP}/src/import/vendor.fetch/%s"
+        template = """# [%s %s] git ls-remote %s %s
+SRCREV_%s = "%s"
+SRC_URI += "git://%s;name=%s;protocol=https;nobranch=1;destsuffix=${GO_SRCURI_DESTSUFFIX}/vendor.fetch/%s"
 
 """
         # We can't simply write SRC_URIs one by one in the order that go.mod specify them.
@@ -533,7 +602,10 @@ SRC_URI += "git://%s;name=%s;protocol=https;nobranch=1;destsuffix=${WORKDIR}/${B
             # sort the src_uri_contents and then write it
             src_uri_contents.sort(key=take_first_len)
             for content in src_uri_contents:
-                f.write(template % content)
+                try:
+                    f.write(template % content)
+                except Exception as e:
+                    logger.warning( "exception while writing src_uri.inc: %s" % e )
         logger.info("%s generated" % src_uri_inc_file)
 
     def gen_relocation_inc(self):
@@ -549,14 +621,40 @@ do_compile:prepend() {
         site_dest=$(echo $s | cut -d: -f1)
         site_source=$(echo $s | cut -d: -f2)
         force_flag=$(echo $s | cut -d: -f3)
+
         mkdir -p vendor.copy/$site_dest
+
+        # create a temporary exclude file
+        exclude_file=$(mktemp)
+
+        find vendor.fetch/$site_source -type d -print0 | \
+        xargs -0 du -sBM 2>/dev/null | \
+        awk '{if ($1+0 > 500) print substr($0, index($0,$2))}' | \
+        sed 's|^vendor.fetch/||' > "$exclude_file"
+
         if [ -n "$force_flag" ]; then
             echo "[INFO] $site_dest: force copying .go files"
             rm -rf vendor.copy/$site_dest
-            rsync -a --exclude='vendor/' --exclude='.git/' vendor.fetch/$site_source/ vendor.copy/$site_dest
+            rsync -a \
+                --exclude='vendor/' \
+                --exclude='.git/' \
+                --exclude-from="$exclude_file" \
+                vendor.fetch/$site_source/ vendor.copy/$site_dest
         else
-            [ -n "$(ls -A vendor.copy/$site_dest/*.go 2> /dev/null)" ] && { echo "[INFO] vendor.fetch/$site_source -> $site_dest: go copy skipped (files present)" ; true ; } || { echo "[INFO] $site_dest: copying .go files" ; rsync -a --exclude='vendor/' --exclude='.git/' vendor.fetch/$site_source/ vendor.copy/$site_dest ; }
+            if [ -n "$(ls -A vendor.copy/$site_dest/*.go 2> /dev/null)" ]; then
+                echo "[INFO] vendor.fetch/$site_source -> $site_dest: go copy skipped (files present)"
+                true
+            else
+                echo "[INFO] $site_dest: copying .go files"
+                rsync -a \
+                    --exclude='vendor/' \
+                    --exclude='.git/' \
+                    --exclude-from="$exclude_file" \
+                    vendor.fetch/$site_source/ vendor.copy/$site_dest
+            fi
         fi
+
+        rm -f "$exclude_file"
     done
 }
 """
@@ -671,6 +769,13 @@ def main():
                   to fetch fixes: go.mod in the main repository (see the repos/
                   directory). If go.mod is edited, modules.txt also has to be
                   updated to match the revision information.
+
+          Note 4: if an entry in go.mod is resolving to a destination that doesn't
+                  have a SRCREV (i.e. golang.org vs github), the destination can
+                  be temporarily overriden by editing: wget-contents/<repo>.repo_url.cache
+                  The next run will use the cached value versus looking it up.
+
+                   % vi wget-contents/golang.org_x_sys.repo_url.cache
 
         How to use in a recipe:
         =======================

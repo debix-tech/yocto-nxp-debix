@@ -10,11 +10,11 @@ LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=25d592776b78ef09663409514483b8c9"
 DEPENDS = ""
 
 SRC_URI = "git://github.com/NXP/plug-and-trust.git;protocol=https;branch=master"
-SRCREV = "1e17cde135868491a621304e2628e1814cd296b0"
+SRCREV = "f124d81642fa2b65cbbb484b7e49b0b8ea97cdce"
 
 S = "${WORKDIR}/git"
 
-PV = "4.5.3+git${SRCPV}"
+PV = "4.7.1+git${SRCPV}"
 
 inherit cmake
 

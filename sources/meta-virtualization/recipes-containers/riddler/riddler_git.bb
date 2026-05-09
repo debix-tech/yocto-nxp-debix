@@ -1,16 +1,16 @@
 HOMEPAGE = "https://github.com/jfrazelle/riddler"
 SUMMARY = "Convert `docker inspect` to opencontainers (OCI compatible) runc spec."
 LICENSE = "MIT"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=20ce4c6a4f32d6ee4a68e3a7506db3f1"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=7bac31faf84a2d7e88972f562a3ebbe5"
 
-SRC_URI = "git://github.com/jfrazelle/riddler;branch=master;protocol=https;destsuffix=git/src/github.com/jessfraz/riddler \
-           file://0001-build-use-to-select-cross-compiler.patch \
+SRC_URI = "git://github.com/jfrazelle/riddler;branch=master;protocol=https;destsuffix=git/src/github.com/genuinetools/riddler \
+          file://0001-build-ensure-that-GOBUILDTAGS-are-respected.patch \
           "
 
-SRCREV = "23befa0b232877b5b502b828e24161d801bd67f6"
-PV = "0.1.0+git"
+SRCREV = "66698f2a5cb6854a1095673a15dcc253f0e28f93"
+PV = "v0.6.4+git"
 
-S = "${WORKDIR}/git/src/github.com/jessfraz/riddler"
+S = "${WORKDIR}/git/src/github.com/genuinetools/riddler"
 GO_IMPORT = "github.com/jessfraz/riddler"
 
 inherit goarch
@@ -22,12 +22,13 @@ COMPATIBLE_HOST:mipsarch = "null"
 
 # This disables seccomp and apparmor, which are on by default in the
 # go package. 
-EXTRA_OEMAKE="BUILDTAGS=''"
+EXTRA_OEMAKE = "BUILDTAGS=''"
 
 do_compile() {
 	export GOARCH="${TARGET_GOARCH}"
 	export GOROOT="${STAGING_LIBDIR}/go"
-	export GOPATH="${S}/src/import/vendor:${WORKDIR}/git/"
+	# export GOPATH="${S}/src/import/vendor:${WORKDIR}/git/"
+	export GOPATH="${WORKDIR}/git/"
 
 	# Pass the needed cflags/ldflags so that cgo
 	# can find the needed headers files and libraries

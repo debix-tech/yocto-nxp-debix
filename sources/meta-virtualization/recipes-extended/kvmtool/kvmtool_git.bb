@@ -16,12 +16,12 @@ SRC_URI = "git://git.kernel.org/pub/scm/linux/kernel/git/will/kvmtool.git;branch
            file://0003-kvmtool-Werror-disabled.patch \
            "
 
-SRCREV = "4d2c017f41533b0e51e00f689050c26190a15318"
+SRCREV = "e48563f5c4a48fe6a6bc2a98a9a7c84a10f043be"
 PV = "5.10.0+git"
 
 S = "${WORKDIR}/git"
 
-EXTRA_OEMAKE='V=1 EXTRA_CFLAGS="-I${STAGING_KERNEL_BUILDDIR}/include/generated -I${STAGING_KERNEL_BUILDDIR}/arch/${ARCH}/include/generated"'
+EXTRA_OEMAKE = 'V=1 EXTRA_CFLAGS="-I${STAGING_KERNEL_BUILDDIR}/include/generated -I${STAGING_KERNEL_BUILDDIR}/arch/${ARCH}/include/generated"'
 
 do_install() {
     install -d ${D}${bindir}

@@ -1,21 +1,77 @@
 # Changelog
 
-## [v2.24.0+scarthgap] - 2024-06-20
+## [v2.28.0] - 2025-09-22
+
+### Changed
+
+* [vigiles.bbclass] Remove do_unpack dependency to prevent unnecessary fetch/unpack operations
+
+### Fixed
+
+* [tsmeta.bbclass] Add lockfiles when writing and reading from intermediate json file to avoid race conditions
+
+## [v2.27.0] - 2025-09-01
 
 ### Added
 
-* [vigiles.bbclass] Add custom annotations to packages in generated SBOM 
+* [feature] Add vulnerability data in generated SBOM
+
+## [v2.26.0] - 2025-08-11
+
+### Added
+
+* [layer] Make layer compatible with Walnascar(5.2) release
+
+### Changed
+
+* [update] remove demo mode
+* [general] Replace deprecated utcnow with datetime.now(timezone.utc)
+
+### Fixed
+
+* [vigiles.bbclass] Fixed handling of 'update' part in version for cpe_id
+
+## [v2.25.0] - 2025-07-08
+
+### Changed
+
+* [general] Updated TimeSys and LinuxLink references
+
+## [v2.24.0] - 2025-04-18
+
+### Added
+
+* [feature] Add option to specify ecosystems for generating vulnerability report
+* [feature] Added support to subscribe frequency for notification during manifest upload
+* [vigiles.bbclass] Support extra backfill packages
+* [vigiles.bbclass] Add option to exclude native and build-only packages
+* [feature] Add VIGILES_ERROR_LEVEL to log vigiles related error messages
+
+### Changed
+
+* [docs] Remove references to free account registration
+* [general] Improve version parsing for accurate reporting in the SBOM
+* [tsmeta.bbclass] Add file locking to prevent concurrent access
+
+### Fixed
+
+* [vigiles.bbclass] Fix: Keyerror while updating runtime dependencies
+* [checkcves.py] Handle KeyErrors when data is unavailable from upload API response
+* [layer] Updated LAYERSERIES_COMPAT_timesys for master
+* [checkcves.py] Optimize ecosystem filtering when consecutive invalid entries occur
+* [vigiles.bbclass] Optimize adding dependencies to fix leakages in final SBOM
+
+## [v2.23.0] - 2024-06-20
+
+### added
+
+* [layer] Make layer compatible with scarthgap release
+* [vigiles.bbclass] Add custom annotations to packages in generated SBOM
 * [vigiles.bbclass] Add feature to disable sbom and report generation for initramfs image
 
 ### Fixed
 
 * [checkcves.py] Fix API key parsing in 'check_linuxlink_key' function
-
-## [v2.23.0+scarthgap] - 2024-05-13
-
-### Added
-
-* [layer] Make compatible with scarthgap
 
 ## [v2.22.0] - 2024-04-11
 

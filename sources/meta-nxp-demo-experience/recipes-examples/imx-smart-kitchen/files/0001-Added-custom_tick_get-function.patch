@@ -2,7 +2,9 @@ From eb8f07322e5472af26f5b43bf4b0b724cc602a8c Mon Sep 17 00:00:00 2001
 From: Ohtokani Pinzon <ohtokani.pinzon@nxp.com>
 Date: Fri, 9 Jun 2023 12:52:21 -0700
 Subject: [PATCH] Added custom_tick_get function
+GoPoint Patch
 
+Upstream-Status: Pending
 Signed-off-by: Ohtokani Pinzon <ohtokani.pinzon@nxp.com>
 ---
  src/hal/lv_hal_tick.c | 19 +++++++++++++++++++

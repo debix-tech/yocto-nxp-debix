@@ -10,3 +10,11 @@ SRCREV = "e3ce21bb937f07b8282dccf4823e2acbdf286d17"
 S = "${WORKDIR}/git"
 
 inherit cmake
+
+do_install:append() {
+    sed -i -e 's:${RECIPE_SYSROOT}::g' \
+        ${D}/${libdir}/cmake/CLBlast/CLBlastConfig.cmake \
+        ${D}/${libdir}/cmake/CLBlast/CLBlastConfig-noconfig.cmake
+}
+
+PACKAGE_ARCH = "${MACHINE_SOCARCH}"

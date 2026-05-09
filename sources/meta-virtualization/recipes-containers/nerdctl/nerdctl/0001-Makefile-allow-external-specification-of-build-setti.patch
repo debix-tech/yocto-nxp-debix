@@ -6,20 +6,23 @@ Subject: [PATCH] Makefile: allow external specification of build settings
 Upstream-Status: Inappropriate [embedded specific]
 
 Signed-off-by: Bruce Ashfield <bruce.ashfield@gmail.com>
----
- Makefile | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Index: nerdctl-v2.0.0-beta.1/src/import/Makefile
+Rebase to v2.0.2
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ src/import/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Index: git/src/import/Makefile
 ===================================================================
---- nerdctl-v2.0.0-beta.1.orig/src/import/Makefile
-+++ nerdctl-v2.0.0-beta.1/src/import/Makefile
-@@ -38,7 +38,7 @@
+--- git.orig/src/import/Makefile
++++ git/src/import/Makefile
+@@ -54,7 +54,7 @@
+ 	VERBOSE_FLAG_LONG := --verbose
+ endif
  
- GO_BUILD_LDFLAGS ?= -s -w
- GO_BUILD_FLAGS ?=
--export GO_BUILD=GO111MODULE=on CGO_ENABLED=0 GOOS=$(GOOS) $(GO) build -ldflags "$(GO_BUILD_LDFLAGS) -X $(PACKAGE)/pkg/version.Version=$(VERSION) -X $(PACKAGE)/pkg/version.Revision=$(REVISION)"
-+export GO_BUILD=$(GO) build -ldflags "$(GO_BUILD_LDFLAGS) -X $(PACKAGE)/pkg/version.Version=$(VERSION) -X $(PACKAGE)/pkg/version.Revision=$(REVISION)"
+-export GO_BUILD=CGO_ENABLED=0 GOOS=$(GOOS) $(GO) -C $(MAKEFILE_DIR) build -ldflags "$(GO_BUILD_LDFLAGS) $(VERBOSE_FLAG) -X $(PACKAGE)/pkg/version.Version=$(VERSION) -X $(PACKAGE)/pkg/version.Revision=$(REVISION)"
++export GO_BUILD=GOOS=$(GOOS) $(GO) -C $(MAKEFILE_DIR) build -ldflags "$(GO_BUILD_LDFLAGS) $(VERBOSE_FLAG) -X $(PACKAGE)/pkg/version.Version=$(VERSION) -X $(PACKAGE)/pkg/version.Revision=$(REVISION)"
  
- ifdef VERBOSE
- 	VERBOSE_FLAG := -v
+ ifndef NO_COLOR
+     NC := \033[0m

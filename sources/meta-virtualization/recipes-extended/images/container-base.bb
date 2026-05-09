@@ -7,6 +7,7 @@ LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COREBASE}/meta/COPYING.MIT;md5=3da9cfbcb788c80a0384361b4de20420"
 
 IMAGE_FSTYPES = "container oci"
+
 inherit image
 inherit image-oci
 
@@ -20,6 +21,10 @@ IMAGE_INSTALL = " \
        netbase \
        ${CONTAINER_SHELL} \
 "
+
+# Keep the entrypoint empty so that this image can be easily be
+# inherted and re-used for interactive or non interactive images
+OCI_IMAGE_ENTRYPOINT ?= ""
 
 # If the following is configured in local.conf (or the distro):
 #      PACKAGE_EXTRA_ARCHS:append = " container-dummy-provides"
@@ -36,7 +41,16 @@ CONTAINER_SHELL ?= "${@bb.utils.contains('PACKAGE_EXTRA_ARCHS', 'container-dummy
 IMAGE_CONTAINER_NO_DUMMY = "1"
 
 # Workaround /var/volatile for now
+# This is required because the lack of post-install scripts means volatile
+# directories (/var/volatile/*, etc.) are not created, so we do that ourselves
+# in a minimal way below. We could bootstrap and run some of the more standard
+# scripts that do it at boot, but we avoid that until needed.
 ROOTFS_POSTPROCESS_COMMAND += "rootfs_fixup_var_volatile ; "
+
+# This :remove is required, because it comes along and deletes our /var/volatile/
+# fixups!
+ROOTFS_POSTPROCESS_COMMAND:remove = "empty_var_volatile"
+
 rootfs_fixup_var_volatile () {
     install -m 1777 -d ${IMAGE_ROOTFS}/${localstatedir}/volatile/tmp
     install -m 755 -d ${IMAGE_ROOTFS}/${localstatedir}/volatile/log

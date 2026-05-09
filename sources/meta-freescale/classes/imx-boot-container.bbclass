@@ -27,7 +27,7 @@
 ATF_MACHINE_NAME = "bl31-${ATF_PLATFORM}.bin"
 ATF_MACHINE_NAME:append = "${@bb.utils.contains('MACHINE_FEATURES', 'optee', '-optee', '', d)}"
 
-IMX_BOOT_CONTAINER_FIRMWARE_SOC = ""
+IMX_BOOT_CONTAINER_FIRMWARE_SOC ?= ""
 IMX_BOOT_CONTAINER_FIRMWARE_SOC:mx8mq-generic-bsp = " \
     signed_dp_imx8m.bin \
     signed_hdmi_imx8m.bin \
@@ -63,6 +63,9 @@ do_resolve_and_populate_binaries() {
                     else
                         bberror "ATF binary is undefined, result binary would be unusable!"
                     fi
+                    if [ "${@bb.utils.contains('MACHINE_FEATURES', 'optee', '1' , '0' , d)}" = "1" ] ; then
+                        cp ${DEPLOY_DIR_IMAGE}/${OPTEE_BOOT_IMAGE} ${B}/${config}/
+                    fi
                 fi
             done
             unset  j
@@ -96,7 +99,7 @@ do_deploy:append() {
                     if [ ! -f "${DEPLOYDIR}/imx-boot" ]; then
                         ln -sf flash.bin-${MACHINE}-${type} flash.bin
                         ln -sf flash.bin-${MACHINE}-${type} imx-boot
-
+                        ln -sf flash.bin.tagged imx-boot.tagged
                     else
                         bbwarn "Use custom wks.in for $UBOOT_CONFIG = $type"
                     fi

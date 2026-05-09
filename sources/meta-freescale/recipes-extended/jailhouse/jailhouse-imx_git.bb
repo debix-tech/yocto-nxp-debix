@@ -16,12 +16,16 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=9fa7f895f96bde2d47fd5b7d95b6ba4d \
 PROVIDES = "jailhouse"
 RPROVIDES:${PN} += "jailhouse"
 
-SRCBRANCH = "lf-6.6.3_1.0.0"
-SRCREV = "184a287f4c4c63a3842a3b582b5d700e0f9fd9a4"
+SRCBRANCH = "lf-6.12.20_2.0.0"
+SRCREV = "399d65450e9a377b4aaff4b0627619174e1c8c46"
+
+PV = "2023.03+git${SRCPV}"
 
 IMX_JAILHOUSE_SRC ?= "git://github.com/nxp-imx/imx-jailhouse.git;protocol=https"
 SRC_URI = "${IMX_JAILHOUSE_SRC};branch=${SRCBRANCH} \
            file://arm-arm64-Makefile-Remove-march-option-from-Makefile.patch \
+           file://0001-YOCIMX-9281-1-Fix-gcc15-errors.patch \
+           file://0002-YOCIMX-9281-2-hypervisor-arm64-fix-strh-usage.patch \
           "
 
 DEPENDS = " \
@@ -107,6 +111,12 @@ RDEPENDS:pyjailhouse = " \
     python3-shell \
 "
 
-INSANE_SKIP:${PN} = "ldflags"
+INSANE_SKIP:${PN} = "ldflags buildpaths"
+INSANE_SKIP:${PN}-dbg = "buildpaths"
+
+# The QA error in package kernel-module-${KERNEL_VERSION} cannot be skipped with
+# INSANE_SKIP, so adjust at the ERROR_QA level
+ERROR_QA:remove = "buildpaths"
+INSANE_SKIP:kernel-module-${KERNEL_VERSION} = "buildpaths"
 
 COMPATIBLE_MACHINE = "(mx8m-nxp-bsp|mx8ulp-nxp-bsp|mx9-nxp-bsp)"

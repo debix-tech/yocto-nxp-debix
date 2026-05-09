@@ -98,7 +98,7 @@ files, and how to package the compiled output.
 
 The term "package" is sometimes used to refer to recipes. However, since
 the word "package" is used for the packaged output from the OpenEmbedded
-build system (i.e. ``.ipk`` or ``.deb`` files), this document avoids
+build system (i.e. ``.ipk``, ``.deb`` or ``.rpm`` files), this document avoids
 using the term "package" when referring to recipes.
 
 Classes
@@ -256,7 +256,7 @@ development environment.
 .. note::
 
    The
-   scripts/oe-setup-builddir
+   ``scripts/oe-setup-builddir``
    script uses the
    ``$TEMPLATECONF``
    variable to determine which sample configuration files to locate.
@@ -276,6 +276,9 @@ in the ``meta-poky`` layer:
 
 -  *Shared State Directory:* Controlled by the
    :term:`SSTATE_DIR` variable.
+
+-  *Persistent Data Directory:* Controlled by the
+   :term:`PERSISTENT_DIR` variable.
 
 -  *Build Output:* Controlled by the
    :term:`TMPDIR` variable.
@@ -352,7 +355,7 @@ layers the build system uses to further control the build. These layers
 provide Metadata for the software, machine, and policies.
 
 In general, there are three types of layer input. You can see them below
-the "User Configuration" box in the `general workflow
+the "User Configuration" box in the :ref:`general workflow
 figure <overview-manual/concepts:openembedded build system concepts>`:
 
 -  *Metadata (.bb + Patches):* Software layers containing
@@ -420,14 +423,14 @@ build.
 Distro Layer
 ~~~~~~~~~~~~
 
-The distribution layer provides policy configurations for your
+A distribution layer provides policy configurations for your
 distribution. Best practices dictate that you isolate these types of
 configurations into their own layer. Settings you provide in
 ``conf/distro/distro.conf`` override similar settings that BitBake finds
 in your ``conf/local.conf`` file in the :term:`Build Directory`.
 
 The following list provides some explanation and references for what you
-typically find in the distribution layer:
+typically find in a distribution layer:
 
 -  *classes:* Class files (``.bbclass``) hold common functionality that
    can be shared among recipes in the distribution. When your recipes
@@ -454,7 +457,7 @@ typically find in the distribution layer:
 BSP Layer
 ~~~~~~~~~
 
-The BSP Layer provides machine configurations that target specific
+A BSP layer provides machine configurations that target specific
 hardware. Everything in this layer is specific to the machine for which
 you are building the image or the SDK. A common structure or form is
 defined for BSP layers. You can learn more about this structure in the
@@ -465,7 +468,7 @@ defined for BSP layers. You can learn more about this structure in the
    In order for a BSP layer to be considered compliant with the Yocto
    Project, it must meet some structural requirements.
 
-The BSP Layer's configuration directory contains configuration files for
+A BSP layer's configuration directory contains configuration files for
 the machine (``conf/machine/machine.conf``) and, of course, the layer
 (``conf/layer.conf``).
 
@@ -477,18 +480,18 @@ formfactors, graphics support systems, and so forth.
 .. note::
 
    While the figure shows several
-   recipes-\*
+   ``recipes-*``
    directories, not all these directories appear in all BSP layers.
 
 Software Layer
 ~~~~~~~~~~~~~~
 
-The software layer provides the Metadata for additional software
+A software layer provides the Metadata for additional software
 packages used during the build. This layer does not include Metadata
 that is specific to the distribution or the machine, which are found in
 their respective layers.
 
-This layer contains any recipes, append files, and patches, that your
+This layer contains any recipes, append files, and patches that your
 project needs.
 
 Sources
@@ -560,9 +563,8 @@ source tree used by the group).
 
 The canonical method through which to include a local project is to use the
 :ref:`ref-classes-externalsrc` class to include that local project. You use
-either the ``local.conf`` or a recipe's append file to override or set the
-recipe to point to the local directory on your disk to pull in the whole
-source tree.
+either ``local.conf`` or a recipe's append file to override or set the
+recipe to point to the local directory from which to fetch the source.
 
 Source Control Managers (Optional)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -683,7 +685,7 @@ Source Fetching
 The first stages of building a recipe are to fetch and unpack the source
 code:
 
-.. image:: figures/source-fetching.png
+.. image:: svg/source-fetching.*
    :width: 100%
 
 The :ref:`ref-tasks-fetch` and :ref:`ref-tasks-unpack` tasks fetch
@@ -704,10 +706,10 @@ a defined structure. For additional general information on the
 the Yocto Project Reference Manual.
 
 Each recipe has an area in the :term:`Build Directory` where the unpacked
-source code resides. The :term:`S` variable points to this area for a recipe's
-unpacked source code. The name of that directory for any given recipe is
-defined from several different variables. The preceding figure and the
-following list describe the :term:`Build Directory`'s hierarchy:
+source code resides. The :term:`UNPACKDIR` variable points to this area for a
+recipe's unpacked source code, and has the default ``sources-unpack`` name. The
+preceding figure and the following list describe the :term:`Build Directory`'s
+hierarchy:
 
 -  :term:`TMPDIR`: The base directory
    where the OpenEmbedded build system performs all its work during the
@@ -736,11 +738,11 @@ following list describe the :term:`Build Directory`'s hierarchy:
    -  :term:`PV`: The version of the
       recipe used to build the package.
 
-   -  :term:`PR`: The revision of the
-      recipe used to build the package.
+-  :term:`UNPACKDIR`: Contains the unpacked source files for a given recipe.
 
--  :term:`S`: Contains the unpacked source
-   files for a given recipe.
+-  :term:`S`: Contains the final location of the source code.
+
+   The default value for :term:`BP` is ``${BPN}-${PV}`` where:
 
    -  :term:`BPN`: The name of the recipe
       used to build the package. The :term:`BPN` variable is a version of
@@ -764,7 +766,7 @@ Patching
 Once source code is fetched and unpacked, BitBake locates patch files
 and applies them to the source files:
 
-.. image:: figures/patching.png
+.. image:: svg/patching.*
    :width: 100%
 
 The :ref:`ref-tasks-patch` task uses a
@@ -792,7 +794,7 @@ processes patches, see the
 ":ref:`dev-manual/new-recipe:patching code`"
 section in the
 Yocto Project Development Tasks Manual. You can also see the
-":ref:`sdk-manual/extensible:use \`\`devtool modify\`\` to modify the source of an existing component`"
+":ref:`dev-manual/devtool:use \`\`devtool modify\`\` to modify the source of an existing component`"
 section in the Yocto Project Application Development and the Extensible
 Software Development Kit (SDK) manual and the
 ":ref:`kernel-dev/common:using traditional kernel development to patch the kernel`"
@@ -805,7 +807,7 @@ After source code is patched, BitBake executes tasks that configure and
 compile the source code. Once compilation occurs, the files are copied
 to a holding area (staged) in preparation for packaging:
 
-.. image:: figures/configuration-compile-autoreconf.png
+.. image:: svg/configuration-compile-autoreconf.*
    :width: 100%
 
 This step in the build process consists of the following tasks:
@@ -861,7 +863,7 @@ Package Splitting
 After source code is configured, compiled, and staged, the build system
 analyzes the results and splits the output into packages:
 
-.. image:: figures/analysis-for-package-splitting.png
+.. image:: svg/analysis-for-package-splitting.*
    :width: 100%
 
 The :ref:`ref-tasks-package` and
@@ -912,11 +914,62 @@ the analysis and package splitting process use several areas:
    execute on a system and it generates code for yet another machine
    (e.g. :ref:`ref-classes-cross-canadian` recipes).
 
-The :term:`FILES` variable defines the
-files that go into each package in
-:term:`PACKAGES`. If you want
-details on how this is accomplished, you can look at
-:yocto_git:`package.bbclass </poky/tree/meta/classes-global/package.bbclass>`.
+Packages for a recipe are listed in the :term:`PACKAGES` variable. The
+:oe_git:`bitbake.conf </openembedded-core/tree/meta/conf/bitbake.conf>`
+configuration file defines the following default list of packages::
+
+  PACKAGES = "${PN}-src ${PN}-dbg ${PN}-staticdev ${PN}-dev ${PN}-doc ${PN}-locale ${PACKAGE_BEFORE_PN} ${PN}"
+
+Each of these packages contains a default list of files defined with the
+:term:`FILES` variable. For example, the package ``${PN}-dev`` represents files
+useful to the development of applications depending on ``${PN}``. The default
+list of files for ``${PN}-dev``, also defined in :oe_git:`bitbake.conf
+</openembedded-core/tree/meta/conf/bitbake.conf>`, is defined as follows::
+
+  FILES:${PN}-dev = "${includedir} ${FILES_SOLIBSDEV} ${libdir}/*.la \
+                  ${libdir}/*.o ${libdir}/pkgconfig ${datadir}/pkgconfig \
+                  ${datadir}/aclocal ${base_libdir}/*.o \
+                  ${libdir}/${BPN}/*.la ${base_libdir}/*.la \
+                  ${libdir}/cmake ${datadir}/cmake"
+
+The paths in this list must be *absolute* paths from the point of view of the
+root filesystem on the target, and must *not* make a reference to the variable
+:term:`D` or any :term:`WORKDIR` related variable. A correct example would be::
+
+  ${sysconfdir}/foo.conf
+
+.. note::
+
+   The list of files for a package is defined using the override syntax by
+   separating :term:`FILES` and the package name by a semi-colon (``:``).
+
+A given file can only ever be in one package. By iterating from the leftmost to
+rightmost package in :term:`PACKAGES`, each file matching one of the patterns
+defined in the corresponding :term:`FILES` definition is included in the
+package.
+
+.. note::
+
+  To find out which package installs a file, the ``oe-pkgdata-util``
+  command-line utility can be used::
+
+    $ oe-pkgdata-util find-path '/etc/fstab'
+    base-files: /etc/fstab
+
+  For more information on the ``oe-pkgdata-util`` utility, see the section
+  :ref:`dev-manual/debugging:Viewing Package Information with
+  ``oe-pkgdata-util``` of the Yocto Project Development Tasks Manual.
+
+To add a custom package variant of the ``${PN}`` recipe named
+``${PN}-extra`` (name is arbitrary), one can add it to the
+:term:`PACKAGE_BEFORE_PN` variable::
+
+  PACKAGE_BEFORE_PN += "${PN}-extra"
+
+Alternatively, a custom package can be added by adding it to the
+:term:`PACKAGES` variable using the prepend operator (``=+``)::
+
+  PACKAGES =+ "${PN}-extra"
 
 Depending on the type of packages being created (RPM, DEB, or IPK), the
 :ref:`do_package_write_* <ref-tasks-package_write_deb>`
@@ -2153,7 +2206,7 @@ require root privileges, the fact that some earlier steps ran in a fake
 root environment does not cause problems.
 
 The capability to run tasks in a fake root environment is known as
-"`fakeroot <http://man.he.net/man1/fakeroot>`__", which is derived from
+":manpage:`fakeroot <fakeroot(1)>`", which is derived from
 the BitBake keyword/variable flag that requests a fake root environment
 for a task.
 
@@ -2347,8 +2400,8 @@ The contents of ``sayhello_0.1.bb`` are::
    S = "${WORKDIR}/git"
 
    do_install(){
-      install -d ${D}/usr/bin
-      install -m 0700 sayhello ${D}/usr/bin
+      install -d ${D}${bindir}
+      install -m 0700 sayhello ${D}${bindir}
    }
 
 After placing the recipes in a custom layer we can run ``bitbake sayhello``

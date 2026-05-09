@@ -2,7 +2,9 @@ From e56d63ced54cd1344b5347f578a48e2deb25f490 Mon Sep 17 00:00:00 2001
 From: Jinghui <jinghui.liu@nxp.com>
 Date: Wed, 24 Jan 2024 16:13:11 +0900
 Subject: [PATCH] fix wayland busy flush and add wm_capabilities
+GoPoint Patch
 
+Upstream-Status: Pending
 ---
  wayland/wayland.c | 28 +++++++++++++++++++++-------
  1 file changed, 21 insertions(+), 7 deletions(-)

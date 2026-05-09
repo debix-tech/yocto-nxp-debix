@@ -1,17 +1,17 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
-SRC_URI += " \
-    file://psplash-basic.service \
-    file://psplash-network.service \
-    file://psplash-quit.service \
-"
-SYSTEMD_SERVICE:${PN} += "${@bb.utils.contains('DISTRO_FEATURES', 'systemd', ' psplash-basic.service psplash-network.service psplash-quit.service', '', d)}"
+SRC_URI:append:imx-generic-bsp = " file://imx.conf"
 
-do_install:append () {
-    if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
-        install -d ${D}${systemd_unitdir}/system
-        install -m 644 ${WORKDIR}/psplash-basic.service ${D}/${systemd_unitdir}/system
-        install -m 644 ${WORKDIR}/psplash-network.service ${D}/${systemd_unitdir}/system
-        install -m 644 ${WORKDIR}/psplash-quit.service ${D}/${systemd_unitdir}/system
+PACKAGECONFIG:remove:imx-generic-bsp = "${PACKAGECONFIG_REMOVE}"
+PACKAGECONFIG_REMOVE ?= " \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'wayland', 'progress-bar', '', d)}"
+
+do_install:append:imx-generic-bsp() {
+    if [ "${@bb.utils.filter('DISTRO_FEATURES', 'systemd', d)}" ]; then
+        install -Dm 0644 ${UNPACKDIR}/imx.conf ${D}${systemd_system_unitdir}/psplash-start@.service.d/imx.conf
     fi
 }
+
+PACKAGE_ARCH:imx-generic-bsp = "${MACHINE_SOCARCH}"
+
+FILES:${PN}:append:imx-generic-bsp = " ${systemd_system_unitdir}/psplash-start@.service.d"

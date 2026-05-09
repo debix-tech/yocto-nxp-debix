@@ -1,0 +1,66 @@
+/*
+*  Copyright (c) 2020, The OpenThread Authors.
+*  Copyright 2025 NXP
+*  All rights reserved.
+*
+*  Redistribution and use in source and binary forms, with or without
+*  modification, are permitted provided that the following conditions are met:
+*  1. Redistributions of source code must retain the above copyright
+*     notice, this list of conditions and the following disclaimer.
+*  2. Redistributions in binary form must reproduce the above copyright
+*     notice, this list of conditions and the following disclaimer in the
+*     documentation and/or other materials provided with the distribution.
+*  3. Neither the name of the copyright holder nor the
+*     names of its contributors may be used to endorse or promote products
+*     derived from this software without specific prior written permission.
+*
+*  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+*  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+*  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+*  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+*  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+*  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+*  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+*  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+*  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+*  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+*  POSSIBILITY OF SUCH DAMAGE.
+*/
+
+/*
+* Header for patch information.
+* Description : Add in MFG Get/Set SPI FREQ MODE
+* Version : v001
+* Mandatory/Optional : Optional
+* Impact if not applied : MFG cannot change the SOC SPI frequency mode
+*/
+
+Upstream-Status: Inappropriate [platform specific changes]
+
+diff --git a/src/posix/platform/daemon.cpp b/src/posix/platform/daemon.cpp
+index a96c3c2e3..3daf139da 100644
+--- a/src/posix/platform/daemon.cpp
++++ b/src/posix/platform/daemon.cpp
+@@ -82,6 +82,7 @@ extern "C"
+ #define MFG_CMD_ACTION_GET 0
+ #define MFG_CMD_ACTION_SET 1
+ 
++#define MFG_CMD_GET_SET_SPI_FREQUENCY 0x9 // 1
+ #define MFG_CMD_GET_SET_CHANNEL 0x0b      // 11
+ #define MFG_CMD_GET_SET_TXPOWER 0x0f      // 15
+ #define MFG_CMD_CONTINUOUS_TX 0x11        // 17
+@@ -379,6 +380,14 @@ otError ProcessMfgCommands(void *aContext, uint8_t aArgsLength, char *aArgs[])
+ 
+         switch (cmdId)
+         {
++        case MFG_CMD_GET_SET_SPI_FREQUENCY: // get spi freq mode ( 0 => ] 100kHz ;  3.8MHz] ; 1 => ] MIN ; 10MHz] ; not supported )
++                error = ProcessMfgGetInt8((otInstance*)aContext, MFG_CMD_GET_SET_SPI_FREQUENCY, aArgsLength);
++            break;
++
++        case MFG_CMD_GET_SET_SPI_FREQUENCY + 1: // set spi freq ( 0 => ] 100kHz ;  3.8MHz] ; 1 => ] MIN ; 10MHz] )
++                error = ProcessMfgSetInt8((otInstance*)aContext, MFG_CMD_GET_SET_SPI_FREQUENCY, aArgsLength, aArgs, 0, 1);
++            break;
++
+         case MFG_CMD_GET_SET_CHANNEL: // get channel
+             error = ProcessMfgGetInt8((otInstance*)aContext, MFG_CMD_GET_SET_CHANNEL, aArgsLength);
+             break;

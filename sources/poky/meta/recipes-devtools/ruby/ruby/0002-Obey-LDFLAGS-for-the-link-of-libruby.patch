@@ -1,20 +1,19 @@
-From 21d8e7700fa0a9c4bf569dd366134060ae858832 Mon Sep 17 00:00:00 2001
+From 2625f6c155105d352d6a1ff3a722e7896431ff91 Mon Sep 17 00:00:00 2001
 From: Christopher Larson <chris_larson@mentor.com>
 Date: Thu, 5 May 2016 10:59:07 -0700
 Subject: [PATCH] Obey LDFLAGS for the link of libruby
 
 Signed-off-by: Christopher Larson <chris_larson@mentor.com>
 Upstream-Status: Pending
-
 ---
  template/Makefile.in | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/template/Makefile.in b/template/Makefile.in
-index 1456313..15b98a4 100644
+index 8f996b8..c708b64 100644
 --- a/template/Makefile.in
 +++ b/template/Makefile.in
-@@ -127,7 +127,7 @@ ENABLE_SHARED = @ENABLE_SHARED@
+@@ -120,7 +120,7 @@ ENABLE_SHARED = @ENABLE_SHARED@
  LDSHARED = @LIBRUBY_LDSHARED@
  DLDSHARED = @DLDSHARED@
  XDLDFLAGS = @DLDFLAGS@
@@ -22,4 +21,4 @@ index 1456313..15b98a4 100644
 +DLDFLAGS = @LIBRUBY_DLDFLAGS@ @LDFLAGS@ $(XLDFLAGS) $(ARCH_FLAG)
  SOLIBS = @SOLIBS@
  ENABLE_DEBUG_ENV = @ENABLE_DEBUG_ENV@
- MAINLIBS = $(YJIT_LIBS) @MAINLIBS@
+ MAINLIBS = @MAINLIBS@

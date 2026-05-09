@@ -15,6 +15,7 @@ SRC_URI = " \
 	file://0001-Don-t-set-uid-gid-during-install.patch \
 	file://riscv64-linux-gcc.rul \
 	file://gcc14-fix.patch \
+	file://0001-fix-nsectors-exceeds-0xffff-situation.patch \
 	"
 
 SRC_URI[md5sum] = "7d45c5b7e1f78d85d1583b361aee6e8b"
@@ -25,7 +26,7 @@ EXTRA_OEMAKE = "-e MAKEFLAGS= CPPOPTX='${CPPFLAGS}' COPTX='${CFLAGS}' C++OPTX='$
 # Stop failures when 'cc' can't be found
 export ac_cv_prog_CC = "${CC}"
 
-inherit native
+inherit sourceforge-releases native
 
 # Use -std=gnu89 to build with gcc-14 (https://bugs.gentoo.org/903876)
 # this needs to be after native inherit (which sets CFLAGS to BUILD_CFLAGS)
@@ -37,7 +38,7 @@ do_configure() {
 
         install -m 0755 ${STAGING_DATADIR_NATIVE}/gnu-config/config.sub ${S}/autoconf
         install -m 0755 ${STAGING_DATADIR_NATIVE}/gnu-config/config.guess ${S}/autoconf
-        install -m 0644 ${WORKDIR}/riscv64-linux-gcc.rul ${S}/RULES/
+        install -m 0644 ${UNPACKDIR}/riscv64-linux-gcc.rul ${S}/RULES/
 }
 
 do_install() {

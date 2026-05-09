@@ -3,10 +3,10 @@ LICENSE = "GPL-2.0-only"
 LIC_FILES_CHKSUM = "file://COPYING;md5=b234ee4d69f5fce4486a80fdaf4a4263"
 PRIORITY = "optional"
 
-SRCREV_crun = "89d44467e3b410b73f2065756a12789be45b855b"
-SRCREV_libocispec = "19c05670c37a42c217caa7b141bcaada7867cc15"
-SRCREV_ispec = "9615142d016838b5dfe7453f80af0be74feb5c7c"
-SRCREV_rspec = "720792f25ae6e9ee6b1332db698f37659e69ce8d"
+SRCREV_crun = "4d6eae2eb8047a7f51e536ffe461666b65b3d5e9"
+SRCREV_libocispec = "5ffd4dd9fa684e0ffb2f0b5ea4a6cb638b021397"
+SRCREV_ispec = "c66e8113cbad252a418d85f061bd1a20d0904d08"
+SRCREV_rspec = "9505701eb390445ef7edf2be3bd3d7bc1f14eae5"
 SRCREV_yajl = "f344d21280c3e4094919fd318bc5ce75da91fc06"
 
 SRCREV_FORMAT = "crun_rspec"
@@ -17,19 +17,29 @@ SRC_URI = "git://github.com/containers/crun.git;branch=main;name=crun;protocol=h
            git://github.com/containers/yajl.git;branch=main;name=yajl;destsuffix=git/libocispec/yajl;protocol=https \
           "
 
-PV = "v1.14.3+git${SRCREV_crun}"
+PV = "v1.20.0+git${SRCREV_crun}"
 S = "${WORKDIR}/git"
 
-REQUIRED_DISTRO_FEATURES ?= "systemd seccomp"
+inherit autotools-brokensep pkgconfig
 
-inherit autotools-brokensep pkgconfig features_check
+# if this is true, we'll symlink crun to runc for easier integration
+# with container stacks
+CRUN_AS_RUNC ?= "true"
 
-PACKAGECONFIG ??= ""
+PACKAGECONFIG ??= " \
+    caps external-yajl man \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'seccomp', 'seccomp', '', d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'systemd', '', d)} \
+"
 
-DEPENDS = "yajl libcap go-md2man-native m4-native"
-# TODO: is there a packageconfig to turn this off ?
-DEPENDS += "libseccomp"
-DEPENDS += "systemd"
+PACKAGECONFIG[caps] = "--enable-caps,--disable-caps,libcap"
+PACKAGECONFIG[external-yajl] = "--disable-embedded-yajl,--enable-embedded-yajl,yajl"
+# whether to regenerate manpages that are already present in the repo
+PACKAGECONFIG[man] = ",,go-md2man-native"
+PACKAGECONFIG[seccomp] = "--enable-seccomp,--disable-seccomp,libseccomp"
+PACKAGECONFIG[systemd] = "--enable-systemd,--disable-systemd,systemd"
+
+DEPENDS = "m4-native"
 DEPENDS:append:libc-musl = " argp-standalone"
 
 do_configure:prepend () {
@@ -41,4 +51,7 @@ do_configure:prepend () {
 
 do_install() {
     oe_runmake 'DESTDIR=${D}' install
+    if [ -n "${CRUN_AS_RUNC}" ]; then
+        ln -sr "${D}/${bindir}/crun" "${D}${bindir}/runc"
+    fi
 }

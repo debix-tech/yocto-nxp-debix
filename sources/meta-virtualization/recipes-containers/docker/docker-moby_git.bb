@@ -44,18 +44,16 @@ DESCRIPTION = "Linux container runtime \
 # so we get that tag, and make it our SRCREVS:
 #
 
-SRCREV_moby = "f417435e5f6216828dec57958c490c4f8bae4f98"
-SRCREV_libnetwork = "67e0588f1ddfaf2faf4c8cae8b7ea2876434d91c"
-SRCREV_cli = "01f933261885c0126edb3f47fd56d048ae31265a"
-SRCREV_FORMAT = "moby_libnetwork"
+SRCREV_moby = "bbd0a17ccc67e48d4a69393287b7fcc4f0578683"
+SRCREV_cli = "068a01ea9470df6494cc92d9e64e240805ae47a7"
+SRCREV_FORMAT = "moby"
 SRC_URI = "\
-	git://github.com/moby/moby.git;branch=25.0;name=moby;protocol=https \
-	git://github.com/docker/libnetwork.git;branch=master;name=libnetwork;destsuffix=git/libnetwork;protocol=https \
-	git://github.com/docker/cli;branch=25.0;name=cli;destsuffix=git/cli;protocol=https \
+	git://github.com/moby/moby.git;nobranch=1;name=moby;protocol=https;destsuffix=${GO_SRCURI_DESTSUFFIX} \
+	git://github.com/docker/cli;nobranch=1;name=cli;destsuffix=git/cli;protocol=https \
 	file://docker.init \
-	file://0001-libnetwork-use-GO-instead-of-go.patch \
         file://0001-cli-use-external-GO111MODULE-and-cross-compiler.patch \
         file://0001-dynbinary-use-go-cross-compiler.patch;patchdir=src/import \
+        file://0001-check-config-make-CONFIG_MEMCG_SWAP-conditional.patch;patchdir=src/import \
 	"
 
 DOCKER_COMMIT = "${SRCREV_moby}"
@@ -66,7 +64,7 @@ require docker.inc
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://src/import/LICENSE;md5=4859e97a9c7780e77972d989f0823f28"
 
-DOCKER_VERSION = "25.0.3"
+DOCKER_VERSION = "28.0.1"
 PV = "${DOCKER_VERSION}+git${SRCREV_moby}"
 
 CVE_PRODUCT = "docker mobyproject:moby"

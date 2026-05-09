@@ -1,20 +1,22 @@
 # Copyright (C) 2016 Freescale Semiconductor
-# Copyright (C) 2017-2019,2024 NXP
+# Copyright (C) 2017-2019,2024-2025 NXP
 SUMMARY = "A Daemon wait for NXP mfgtools host's command"
 SECTION = "base"
 DEPENDS = "virtual/kernel dosfstools-native"
 LICENSE = "GPL-2.0-only"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=b234ee4d69f5fce4486a80fdaf4a4263"
 
-inherit autotools-brokensep
-
 PR = "r1"
 PV = "0.5.1+git${SRCPV}"
 
-SRC_URI = "git://github.com/NXPmicro/imx-uuc.git;protocol=https;branch=master"
-SRCREV = "9b4adc0cde346fbae743dc21fcf5115488307b83"
+SRC_URI = "git://github.com/nxp-imx/imx-uuc.git;protocol=https;branch=master"
+SRCREV = "25f65e10368aa07056f9536e88ed911ac7f38f99"
 
 S = "${WORKDIR}/git"
+
+do_install() {
+    oe_runmake 'DESTDIR=${D}' install
+}
 
 FILES:${PN} += "/linuxrc /fat"
 

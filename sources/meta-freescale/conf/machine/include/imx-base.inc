@@ -75,9 +75,9 @@ UBOOT_SUFFIX ?= "${UBOOT_SUFFIX:pn-${IMX_DEFAULT_BOOTLOADER}}"
 # wic based images.
 SPL_BINARY ??= "${@get_spl_binary(d)}"
 
-PREFERRED_PROVIDER_u-boot ??= "${IMX_DEFAULT_BOOTLOADER}"
-PREFERRED_PROVIDER_u-boot-mfgtool ??= "${IMX_DEFAULT_BOOTLOADER}"
 PREFERRED_PROVIDER_virtual/bootloader ??= "${IMX_DEFAULT_BOOTLOADER}"
+PREFERRED_PROVIDER_u-boot ??= "${PREFERRED_PROVIDER_virtual/bootloader}"
+PREFERRED_PROVIDER_u-boot-mfgtool ??= "${PREFERRED_PROVIDER_virtual/bootloader}"
 
 PREFERRED_PROVIDER_u-boot-mxsboot-native ??= "u-boot-fslc-mxsboot-native"
 
@@ -94,6 +94,7 @@ UBOOT_ENTRYPOINT:mx6ulz-generic-bsp ?= "0x80008000"
 UBOOT_ENTRYPOINT:mx7-generic-bsp    ?= "0x80008000"
 UBOOT_ENTRYPOINT:mx7ulp-generic-bsp ?= "0x60008000"
 UBOOT_ENTRYPOINT:mx8m-generic-bsp   ?= "0x40480000"
+UBOOT_ENTRYPOINT:mx93-generic-bsp   ?= "0x80400000"
 UBOOT_ENTRYPOINT:vf-generic-bsp     ?= "0x80008000"
 
 # Some SoC can utilize the boot container provided by U-Boot,
@@ -129,6 +130,7 @@ IMX_DEFAULT_ATF_PROVIDER ??= "imx-atf"
 SOC_ATF_BOOT_UART_BASE                    = ""
 
 SOC_ATF_BOOT_UART_BASE:mx8m-generic-bsp   = "0x30890000"
+SOC_ATF_BOOT_UART_BASE:mx8mq-generic-bsp  = "0x30860000"
 ATF_BOOT_UART_BASE                       ?= "${SOC_ATF_BOOT_UART_BASE}"
 
 PREFERRED_PROVIDER_virtual/xserver      = "xserver-xorg"
@@ -165,7 +167,9 @@ DEFAULTTUNE:mx8m-generic-bsp   ?= "cortexa53-crypto"
 DEFAULTTUNE:mx8qm-generic-bsp  ?= "cortexa72-cortexa53-crypto"
 DEFAULTTUNE:mx8x-generic-bsp   ?= "cortexa35-crypto"
 DEFAULTTUNE:mx8ulp-generic-bsp ?= "cortexa35-crypto"
+DEFAULTTUNE:mx91-generic-bsp   ?= "cortexa55"
 DEFAULTTUNE:mx93-generic-bsp   ?= "cortexa55"
+DEFAULTTUNE:mx95-generic-bsp   ?= "cortexa55"
 
 INHERIT += "machine-overrides-extender"
 
@@ -181,6 +185,7 @@ IMX_SOC_REV:mx8ulp-generic-bsp ??= \
     "${@bb.utils.contains('MACHINE_FEATURES', 'soc-reva0', 'A0', \
                                                            'A2', d)}"
 IMX_SOC_REV:mx93-generic-bsp   ??= "A1"
+IMX_SOC_REV:mx95-generic-bsp   ??= "B0"
 
 IMX_SOC_REV_LOWER   = "${@d.getVar('IMX_SOC_REV').lower()}"
 IMX_SOC_REV_UPPER   = "${@d.getVar('IMX_SOC_REV').upper()}"
@@ -189,12 +194,12 @@ IMX_SOC_REV_UPPER   = "${@d.getVar('IMX_SOC_REV').upper()}"
 ### NXP BSP specific overrides
 #######
 
-MACHINEOVERRIDES_EXTENDER:mx6q:use-nxp-bsp   = "imx-generic-bsp:imx-nxp-bsp:imxfbdev:imxipu:imxvpu:imxgpu:imxgpu2d:imxgpu3d:mx6-generic-bsp:mx6-nxp-bsp:mx6q-generic-bsp:mx6q-nxp-bsp"
-MACHINEOVERRIDES_EXTENDER:mx6dl:use-nxp-bsp  = "imx-generic-bsp:imx-nxp-bsp:imxfbdev:imxpxp:imxipu:imxvpu:imxgpu:imxgpu2d:imxgpu3d:imxepdc:mx6-generic-bsp:mx6-nxp-bsp:mx6dl-generic-bsp:mx6dl-nxp-bsp"
+MACHINEOVERRIDES_EXTENDER:mx6q:use-nxp-bsp   = "imx-generic-bsp:imx-nxp-bsp:imxfbdev:imxipu:imxvpu:imxgpu:imxviv:imxgpu2d:imxgpu3d:mx6-generic-bsp:mx6-nxp-bsp:mx6q-generic-bsp:mx6q-nxp-bsp"
+MACHINEOVERRIDES_EXTENDER:mx6dl:use-nxp-bsp  = "imx-generic-bsp:imx-nxp-bsp:imxfbdev:imxpxp:imxipu:imxvpu:imxgpu:imxviv:imxgpu2d:imxgpu3d:imxepdc:mx6-generic-bsp:mx6-nxp-bsp:mx6dl-generic-bsp:mx6dl-nxp-bsp"
 
-MACHINEOVERRIDES_EXTENDER:mx6sx:use-nxp-bsp  = "imx-generic-bsp:imx-nxp-bsp:imxfbdev:imxpxp:imxgpu:imxgpu2d:imxgpu3d:mx6-generic-bsp:mx6-nxp-bsp:mx6sx-generic-bsp:mx6sx-nxp-bsp"
+MACHINEOVERRIDES_EXTENDER:mx6sx:use-nxp-bsp  = "imx-generic-bsp:imx-nxp-bsp:imxfbdev:imxpxp:imxgpu:imxviv:imxgpu2d:imxgpu3d:mx6-generic-bsp:mx6-nxp-bsp:mx6sx-generic-bsp:mx6sx-nxp-bsp"
 
-MACHINEOVERRIDES_EXTENDER:mx6sl:use-nxp-bsp  = "imx-generic-bsp:imx-nxp-bsp:imxfbdev:imxpxp:imxgpu:imxgpu2d:imxepdc:mx6-generic-bsp:mx6-nxp-bsp:mx6sl-generic-bsp:mx6sl-nxp-bsp"
+MACHINEOVERRIDES_EXTENDER:mx6sl:use-nxp-bsp  = "imx-generic-bsp:imx-nxp-bsp:imxfbdev:imxpxp:imxgpu:imxviv:imxgpu2d:imxepdc:mx6-generic-bsp:mx6-nxp-bsp:mx6sl-generic-bsp:mx6sl-nxp-bsp"
 MACHINEOVERRIDES_EXTENDER:mx6sll:use-nxp-bsp = "imx-generic-bsp:imx-nxp-bsp:imxfbdev:imxpxp:imxepdc:mx6-generic-bsp:mx6-nxp-bsp:mx6sl-generic-bsp:mx6sl-nxp-bsp:mx6sll-generic-bsp:mx6sll-nxp-bsp"
 
 MACHINEOVERRIDES_EXTENDER:mx6ul:use-nxp-bsp  = "imx-generic-bsp:imx-nxp-bsp:imxfbdev:imxpxp:mx6-generic-bsp:mx6-nxp-bsp:mx6ul-generic-bsp:mx6ul-nxp-bsp"
@@ -202,25 +207,27 @@ MACHINEOVERRIDES_EXTENDER:mx6ull:use-nxp-bsp = "imx-generic-bsp:imx-nxp-bsp:imxf
 MACHINEOVERRIDES_EXTENDER:mx6ulz:use-nxp-bsp = "imx-generic-bsp:imx-nxp-bsp:imxfbdev:imxpxp:imxepdc:mx6-generic-bsp:mx6-nxp-bsp:mx6ul-generic-bsp:mx6ul-nxp-bsp:mx6ull-generic-bsp:mx6ull-nxp-bsp:mx6ulz-generic-bsp:mx6ulz-nxp-bsp"
 
 MACHINEOVERRIDES_EXTENDER:mx7d:use-nxp-bsp   = "imx-generic-bsp:imx-nxp-bsp:imxfbdev:imxpxp:imxepdc:mx7-generic-bsp:mx7-nxp-bsp:mx7d-generic-bsp:mx7d-nxp-bsp"
-MACHINEOVERRIDES_EXTENDER:mx7ulp:use-nxp-bsp = "imx-generic-bsp:imx-nxp-bsp:imxfbdev:imxpxp:imxgpu:imxgpu2d:imxgpu3d:mx7-generic-bsp:mx7-nxp-bsp:mx7ulp-generic-bsp:mx7ulp-nxp-bsp"
+MACHINEOVERRIDES_EXTENDER:mx7ulp:use-nxp-bsp = "imx-generic-bsp:imx-nxp-bsp:imxfbdev:imxpxp:imxgpu:imxviv:imxgpu2d:imxgpu3d:mx7-generic-bsp:mx7-nxp-bsp:mx7ulp-generic-bsp:mx7ulp-nxp-bsp"
 
 MACHINEOVERRIDES_EXTENDER:vf:use-nxp-bsp     = "imx-generic-bsp:imx-nxp-bsp:vf-generic-bsp:vf-nxp-bsp"
 
-MACHINEOVERRIDES_EXTENDER:mx8qm:use-nxp-bsp  = "imx-generic-bsp:imx-nxp-bsp:imxdrm:imxdpu:imxgpu:imxgpu2d:imxgpu3d:imxvulkan:mx8-generic-bsp:mx8-nxp-bsp:mx8qm-generic-bsp:mx8qm-nxp-bsp"
+MACHINEOVERRIDES_EXTENDER:mx8qm:use-nxp-bsp  = "imx-generic-bsp:imx-nxp-bsp:imxdrm:imxdpu:imxgpu:imxviv:imxgpu2d:imxgpu3d:imxvulkan:mx8-generic-bsp:mx8-nxp-bsp:mx8qm-generic-bsp:mx8qm-nxp-bsp"
 
-MACHINEOVERRIDES_EXTENDER:mx8mm:use-nxp-bsp  = "imx-generic-bsp:imx-nxp-bsp:imxdrm:imxvpu:imxgpu:imxgpu2d:imxgpu3d:mx8-generic-bsp:mx8-nxp-bsp:mx8m-generic-bsp:mx8m-nxp-bsp:mx8mm-generic-bsp:mx8mm-nxp-bsp"
-MACHINEOVERRIDES_EXTENDER:mx8mn:use-nxp-bsp  = "imx-generic-bsp:imx-nxp-bsp:imxdrm:imxgpu:imxgpu3d:imxvulkan:mx8-generic-bsp:mx8-nxp-bsp:mx8m-generic-bsp:mx8m-nxp-bsp:mx8mn-generic-bsp:mx8mn-nxp-bsp"
+MACHINEOVERRIDES_EXTENDER:mx8mm:use-nxp-bsp  = "imx-generic-bsp:imx-nxp-bsp:imxdrm:imxvpu:imxgpu:imxviv:imxgpu2d:imxgpu3d:mx8-generic-bsp:mx8-nxp-bsp:mx8m-generic-bsp:mx8m-nxp-bsp:mx8mm-generic-bsp:mx8mm-nxp-bsp"
+MACHINEOVERRIDES_EXTENDER:mx8mn:use-nxp-bsp  = "imx-generic-bsp:imx-nxp-bsp:imxdrm:imxgpu:imxviv:imxgpu3d:imxvulkan:mx8-generic-bsp:mx8-nxp-bsp:mx8m-generic-bsp:mx8m-nxp-bsp:mx8mn-generic-bsp:mx8mn-nxp-bsp"
 MACHINEOVERRIDES_EXTENDER:mx8mnul:use-nxp-bsp = "imx-generic-bsp:imx-nxp-bsp:imxfbdev:mx8-generic-bsp:mx8-nxp-bsp:mx8m-generic-bsp:mx8m-nxp-bsp:mx8mnul-generic-bsp:mx8mnul-nxp-bsp"
-MACHINEOVERRIDES_EXTENDER:mx8mp:use-nxp-bsp  = "imx-generic-bsp:imx-nxp-bsp:imxdrm:imxvpu:imxgpu:imxgpu2d:imxgpu3d:imxvulkan:mx8-generic-bsp:mx8-nxp-bsp:mx8m-generic-bsp:mx8m-nxp-bsp:mx8mp-generic-bsp:mx8mp-nxp-bsp"
-MACHINEOVERRIDES_EXTENDER:mx8mq:use-nxp-bsp  = "imx-generic-bsp:imx-nxp-bsp:imxdrm:imxvpu:imxgpu:imxgpu3d:imxvulkan:mx8-generic-bsp:mx8-nxp-bsp:mx8m-generic-bsp:mx8m-nxp-bsp:mx8mq-generic-bsp:mx8mq-nxp-bsp"
+MACHINEOVERRIDES_EXTENDER:mx8mp:use-nxp-bsp  = "imx-generic-bsp:imx-nxp-bsp:imxdrm:imxvpu:imxgpu:imxviv:imxgpu2d:imxgpu3d:imxvulkan:mx8-generic-bsp:mx8-nxp-bsp:mx8m-generic-bsp:mx8m-nxp-bsp:mx8mp-generic-bsp:mx8mp-nxp-bsp"
+MACHINEOVERRIDES_EXTENDER:mx8mq:use-nxp-bsp  = "imx-generic-bsp:imx-nxp-bsp:imxdrm:imxvpu:imxgpu:imxviv:imxgpu3d:imxvulkan:mx8-generic-bsp:mx8-nxp-bsp:mx8m-generic-bsp:mx8m-nxp-bsp:mx8mq-generic-bsp:mx8mq-nxp-bsp"
 
-MACHINEOVERRIDES_EXTENDER:mx8qxp:use-nxp-bsp = "imx-generic-bsp:imx-nxp-bsp:imxdrm:imxdpu:imxgpu:imxgpu2d:imxgpu3d:imxvulkan:mx8-generic-bsp:mx8-nxp-bsp:mx8x-generic-bsp:mx8x-nxp-bsp:mx8qxp-generic-bsp:mx8qxp-nxp-bsp"
-MACHINEOVERRIDES_EXTENDER:mx8dx:use-nxp-bsp  = "imx-generic-bsp:imx-nxp-bsp:imxdrm:imxdpu:imxgpu:imxgpu2d:imxgpu3d:imxvulkan:mx8-generic-bsp:mx8-nxp-bsp:mx8x-generic-bsp:mx8x-nxp-bsp:mx8dx-generic-bsp:mx8dx-nxp-bsp"
+MACHINEOVERRIDES_EXTENDER:mx8qxp:use-nxp-bsp = "imx-generic-bsp:imx-nxp-bsp:imxdrm:imxdpu:imxgpu:imxviv:imxgpu2d:imxgpu3d:imxvulkan:mx8-generic-bsp:mx8-nxp-bsp:mx8x-generic-bsp:mx8x-nxp-bsp:mx8qxp-generic-bsp:mx8qxp-nxp-bsp"
+MACHINEOVERRIDES_EXTENDER:mx8dx:use-nxp-bsp  = "imx-generic-bsp:imx-nxp-bsp:imxdrm:imxdpu:imxgpu:imxviv:imxgpu2d:imxgpu3d:imxvulkan:mx8-generic-bsp:mx8-nxp-bsp:mx8x-generic-bsp:mx8x-nxp-bsp:mx8dx-generic-bsp:mx8dx-nxp-bsp"
 MACHINEOVERRIDES_EXTENDER:mx8dxl:use-nxp-bsp = "imx-generic-bsp:imx-nxp-bsp:imxfbdev:mx8-generic-bsp:mx8-nxp-bsp:mx8x-generic-bsp:mx8x-nxp-bsp:mx8dxl-generic-bsp:mx8dxl-nxp-bsp"
 
-MACHINEOVERRIDES_EXTENDER:mx8ulp:use-nxp-bsp = "imx-generic-bsp:imx-nxp-bsp:imxdrm:imxgpu:imxgpu2d:imxgpu3d:imxvulkan:mx8-generic-bsp:mx8-nxp-bsp:mx8ulp-generic-bsp:mx8ulp-nxp-bsp"
+MACHINEOVERRIDES_EXTENDER:mx8ulp:use-nxp-bsp = "imx-generic-bsp:imx-nxp-bsp:imxdrm:imxgpu:imxviv:imxgpu2d:imxgpu3d:imxvulkan:mx8-generic-bsp:mx8-nxp-bsp:mx8ulp-generic-bsp:mx8ulp-nxp-bsp"
 
+MACHINEOVERRIDES_EXTENDER:mx91:use-nxp-bsp  = "imx-generic-bsp:imx-nxp-bsp:imxdrm:mx9-generic-bsp:mx9-nxp-bsp:mx91-generic-bsp:mx91-nxp-bsp"
 MACHINEOVERRIDES_EXTENDER:mx93:use-nxp-bsp  = "imx-generic-bsp:imx-nxp-bsp:imxdrm:imxpxp:mx9-generic-bsp:mx9-nxp-bsp:mx93-generic-bsp:mx93-nxp-bsp"
+MACHINEOVERRIDES_EXTENDER:mx95:use-nxp-bsp  = "imx-generic-bsp:imx-nxp-bsp:imxdrm:imxdpu:imxgpu:imxmali:imxgpu2d:imxgpu3d:mx9-generic-bsp:mx9-nxp-bsp:mx95-generic-bsp:mx95-nxp-bsp"
 
 #######
 ### Mainline BSP specific overrides
@@ -263,7 +270,9 @@ MACHINEOVERRIDES_EXTENDER:mx8dxl:use-mainline-bsp = "imx-generic-bsp:imx-mainlin
 
 MACHINEOVERRIDES_EXTENDER:mx8ulp:use-mainline-bsp = "imx-generic-bsp:imx-mainline-bsp:mx8-generic-bsp:mx8-mainline-bsp:mx8ulp-generic-bsp:mx8ulp-mainline-bsp"
 
+MACHINEOVERRIDES_EXTENDER:mx91:use-mainline-bsp  = "imx-generic-bsp:imx-mainline-bsp:mx9-generic-bsp:mx9-mainline-bsp:mx91-generic-bsp:mx91-mainline-bsp"
 MACHINEOVERRIDES_EXTENDER:mx93:use-mainline-bsp  = "imx-generic-bsp:imx-mainline-bsp:mx9-generic-bsp:mx9-mainline-bsp:mx93-generic-bsp:mx93-mainline-bsp"
+MACHINEOVERRIDES_EXTENDER:mx95:use-mainline-bsp  = "imx-generic-bsp:imx-mainline-bsp:mx9-generic-bsp:mx9-mainline-bsp:mx95-generic-bsp:mx95-mainline-bsp"
 
 MACHINEOVERRIDES_EXTENDER_FILTER_OUT = " \
     mx6 \
@@ -294,7 +303,9 @@ MACHINEOVERRIDES_EXTENDER_FILTER_OUT = " \
     mx8dx \
     mx8dxl \
     mx8ulp \
+    mx91 \
     mx93 \
+    mx95 \
 "
 
 MACHINEOVERRIDES_FILTERED_OUT_QA_ERROR = "%s overrides cannot be used and need conversion to use the new BSP-specific overrides. Check 'meta-freescale/scripts/convert-bsp-specific-overrides'."
@@ -305,7 +316,7 @@ MACHINE_SOCARCH_SUFFIX:mx6q-nxp-bsp = "-mx6qdl"
 MACHINE_SOCARCH_SUFFIX:mx6dl-nxp-bsp = "-mx6qdl"
 MACHINE_SOCARCH_SUFFIX:mx6sx-nxp-bsp = "-mx6sx"
 MACHINE_SOCARCH_SUFFIX:mx6sl-nxp-bsp = "-mx6sl"
-MACHINE_SOCARCH_SUFFIX:mx6sll-nxp-bsp= "-mx6sll"
+MACHINE_SOCARCH_SUFFIX:mx6sll-nxp-bsp = "-mx6sll"
 MACHINE_SOCARCH_SUFFIX:mx7d-nxp-bsp = "-mx7d"
 MACHINE_SOCARCH_SUFFIX:mx7ulp-nxp-bsp = "-mx7ulp"
 MACHINE_SOCARCH_SUFFIX:vf-nxp-bsp = "-vf"
@@ -322,7 +333,9 @@ MACHINE_SOCARCH_SUFFIX:mx8qxp-nxp-bsp  = "-mx8"
 MACHINE_SOCARCH_SUFFIX:mx8dx-nxp-bsp   = "-mx8"
 MACHINE_SOCARCH_SUFFIX:mx8dxl-nxp-bsp  = "-mx8xl"
 MACHINE_SOCARCH_SUFFIX:mx8ulp-nxp-bsp  = "-mx8ulp"
+MACHINE_SOCARCH_SUFFIX:mx91-nxp-bsp    = "-mx91"
 MACHINE_SOCARCH_SUFFIX:mx93-nxp-bsp    = "-mx93"
+MACHINE_SOCARCH_SUFFIX:mx95-nxp-bsp    = "-mx95"
 
 # For Mainline we use a single SoC suffix as we don't have different build options
 MACHINE_SOCARCH_SUFFIX:imx-mainline-bsp = "-imx"
@@ -399,7 +412,11 @@ IMX_EXTRA_FIRMWARE:mx8-generic-bsp    = "imx-boot-firmware-files imx-sc-firmware
 IMX_EXTRA_FIRMWARE:mx8m-generic-bsp   = "imx-boot-firmware-files"
 IMX_EXTRA_FIRMWARE:mx8x-generic-bsp   = "imx-sc-firmware imx-seco"
 IMX_EXTRA_FIRMWARE:mx8ulp-generic-bsp = "firmware-upower firmware-ele-imx"
+IMX_EXTRA_FIRMWARE:mx91-generic-bsp   = "imx-boot-firmware-files firmware-ele-imx"
 IMX_EXTRA_FIRMWARE:mx93-generic-bsp   = "imx-boot-firmware-files firmware-ele-imx"
+PREFERRED_PROVIDER_virtual/imx-system-manager ??= "imx-system-manager"
+PREFERRED_PROVIDER_virtual/imx-oei ??= "imx-oei"
+IMX_EXTRA_FIRMWARE:mx95-generic-bsp   = "imx-boot-firmware-files firmware-ele-imx virtual/imx-system-manager virtual/imx-oei"
 
 # Firmware
 MACHINE_FIRMWARE ?= ""
@@ -420,6 +437,7 @@ MACHINE_FIRMWARE:append:mx8mp-generic-bsp    = " linux-firmware-imx-sdma-imx7d f
 MACHINE_FIRMWARE:append:mx8mq-generic-bsp    = " linux-firmware-imx-sdma-imx7d"
 MACHINE_FIRMWARE:append:mx8qxp-generic-bsp   = " linux-firmware-imx-sdma-imx7d firmware-imx-vpu-amphion"
 MACHINE_FIRMWARE:append:mx8dx-generic-bsp    = " linux-firmware-imx-sdma-imx7d firmware-imx-vpu-amphion"
+MACHINE_FIRMWARE:append:mx95-generic-bsp     = " firmware-imx-vpu-wave"
 MACHINE_FIRMWARE:append:imx-mainline-bsp     = " linux-firmware-imx-sdma-imx6q linux-firmware-imx-sdma-imx7d firmware-imx-vpu-imx6q firmware-imx-vpu-imx6d"
 
 MACHINE_EXTRA_RRECOMMENDS += "${MACHINE_FIRMWARE}"
@@ -510,28 +528,20 @@ MACHINE_GSTREAMER_1_0_PLUGIN:mx8ulp-nxp-bsp ?= "imx-gst1.0-plugin"
 MACHINE_GSTREAMER_1_0_PLUGIN:mx93-nxp-bsp   ?= "imx-gst1.0-plugin"
 
 # GStreamer forked recipes
-PREFERRED_VERSION_gstreamer1.0:mx8-nxp-bsp              ??= "1.22.5.imx"
-PREFERRED_VERSION_gstreamer1.0-plugins-bad:mx8-nxp-bsp  ??= "1.22.5.imx"
-PREFERRED_VERSION_gstreamer1.0-plugins-base:mx8-nxp-bsp ??= "1.22.5.imx"
-PREFERRED_VERSION_gstreamer1.0-plugins-good:mx8-nxp-bsp ??= "1.22.5.imx"
-PREFERRED_VERSION_gstreamer1.0:mx9-nxp-bsp              ??= "1.22.5.imx"
-PREFERRED_VERSION_gstreamer1.0-plugins-bad:mx9-nxp-bsp  ??= "1.22.5.imx"
-PREFERRED_VERSION_gstreamer1.0-plugins-base:mx9-nxp-bsp ??= "1.22.5.imx"
-PREFERRED_VERSION_gstreamer1.0-plugins-good:mx9-nxp-bsp ??= "1.22.5.imx"
+PREFERRED_VERSION_gstreamer1.0:imx-nxp-bsp              ??= "1.26.0.imx"
+PREFERRED_VERSION_gstreamer1.0-plugins-bad:imx-nxp-bsp  ??= "1.26.0.imx"
+PREFERRED_VERSION_gstreamer1.0-plugins-base:imx-nxp-bsp ??= "1.26.0.imx"
+PREFERRED_VERSION_gstreamer1.0-plugins-good:imx-nxp-bsp ??= "1.26.0.imx"
+
 
 # GStreamer copied recipes
-PREFERRED_VERSION_gst-devtools:mx8-nxp-bsp              ??= "1.22.5.imx"
-PREFERRED_VERSION_gstreamer1.0-libav:mx8-nxp-bsp        ??= "1.22.5.imx"
-PREFERRED_VERSION_gstreamer1.0-plugins-ugly:mx8-nxp-bsp ??= "1.22.5.imx"
-PREFERRED_VERSION_gstreamer1.0-python:mx8-nxp-bsp       ??= "1.22.5.imx"
-PREFERRED_VERSION_gstreamer1.0-rtsp-server:mx8-nxp-bsp  ??= "1.22.5.imx"
-PREFERRED_VERSION_gstreamer1.0-vaapi:mx8-nxp-bsp        ??= "1.22.5.imx"
-PREFERRED_VERSION_gst-devtools:mx9-nxp-bsp              ??= "1.22.5.imx"
-PREFERRED_VERSION_gstreamer1.0-libav:mx9-nxp-bsp        ??= "1.22.5.imx"
-PREFERRED_VERSION_gstreamer1.0-plugins-ugly:mx9-nxp-bsp ??= "1.22.5.imx"
-PREFERRED_VERSION_gstreamer1.0-python:mx9-nxp-bsp       ??= "1.22.5.imx"
-PREFERRED_VERSION_gstreamer1.0-rtsp-server:mx9-nxp-bsp  ??= "1.22.5.imx"
-PREFERRED_VERSION_gstreamer1.0-vaapi:mx9-nxp-bsp        ??= "1.22.5.imx"
+PREFERRED_VERSION_gst-devtools:imx-nxp-bsp              ??= "1.26.0.imx"
+PREFERRED_VERSION_gst-examples:imx-nxp-bsp              ??= "1.24.7.imx"
+PREFERRED_VERSION_gstreamer1.0-libav:imx-nxp-bsp        ??= "1.26.0.imx"
+PREFERRED_VERSION_gstreamer1.0-plugins-ugly:imx-nxp-bsp ??= "1.26.0.imx"
+PREFERRED_VERSION_gstreamer1.0-python:imx-nxp-bsp       ??= "1.26.0.imx"
+PREFERRED_VERSION_gstreamer1.0-rtsp-server:imx-nxp-bsp  ??= "1.26.0.imx"
+PREFERRED_VERSION_gstreamer1.0-vaapi:imx-nxp-bsp        ??= "1.26.0.imx"
 
 # GStreamer downgrade ffmpeg
 PREFERRED_VERSION_ffmpeg:mx8-nxp-bsp ??= "4.4.1"
@@ -546,67 +556,62 @@ SOC_HAS_VIVANTE_KERNEL_DRIVER_SUPPORT:imxgpu = "1"
 #   1 - machine has Vivante GPU driver support
 MACHINE_HAS_VIVANTE_KERNEL_DRIVER_SUPPORT ?= "${SOC_HAS_VIVANTE_KERNEL_DRIVER_SUPPORT}"
 
-# Graphics libraries
-PREFERRED_PROVIDER_virtual/egl      ?= "mesa"
-PREFERRED_PROVIDER_virtual/libgl    ?= "mesa"
-PREFERRED_PROVIDER_virtual/libgles1 ?= "mesa"
-PREFERRED_PROVIDER_virtual/libgles2 ?= "mesa"
+# Override graphics for i.MX GPU
+IMXGPU_GRAPHICS_PROVIDER:imxviv  ?= "imx-gpu-viv"
+IMXGPU_GRAPHICS_PROVIDER:imxmali ?= "mali-imx"
 
-PREFERRED_PROVIDER_virtual/egl:imxgpu        ?= "imx-gpu-viv"
-PREFERRED_PROVIDER_virtual/libgl:imxgpu      ?= "mesa-gl"
-PREFERRED_PROVIDER_virtual/mesa:imxgpu       ?= "mesa-gl"
-PREFERRED_PROVIDER_virtual/libgles1:imxgpu3d ?= "imx-gpu-viv"
-PREFERRED_PROVIDER_virtual/libgles2:imxgpu3d ?= "imx-gpu-viv"
-PREFERRED_PROVIDER_virtual/libgles3:imxgpu3d ?= "imx-gpu-viv"
-PREFERRED_PROVIDER_virtual/libg2d            ?= "imx-gpu-g2d"
-PREFERRED_PROVIDER_virtual/libg2d:imxdpu     ?= "imx-dpu-g2d"
+PREFERRED_PROVIDER_virtual/egl:imxgpu          ?= "${IMXGPU_GRAPHICS_PROVIDER}"
+PREFERRED_PROVIDER_virtual/libgl:imxgpu        ?= "mesa-gl"
+PREFERRED_PROVIDER_virtual/mesa:imxgpu         ?= "mesa-gl"
+PREFERRED_PROVIDER_virtual/libgles1:imxgpu3d   ?= "${IMXGPU_GRAPHICS_PROVIDER}"
+PREFERRED_PROVIDER_virtual/libgles2:imxgpu3d   ?= "${IMXGPU_GRAPHICS_PROVIDER}"
+PREFERRED_PROVIDER_virtual/libgles3:imxgpu3d   ?= "${IMXGPU_GRAPHICS_PROVIDER}"
+
+# The Vivante OpenCL implementation doesn't work with the standard headers and loader
+PREFERRED_PROVIDER_opencl-clhpp:imxviv         ?= "imx-gpu-viv"
+PREFERRED_PROVIDER_opencl-headers:imxviv       ?= "imx-gpu-viv"
+PREFERRED_PROVIDER_opencl-icd-loader:imxviv    ?= "imx-gpu-viv"
+PREFERRED_PROVIDER_virtual/opencl-icd:imxviv   ?= "imx-gpu-viv"
+
+PREFERRED_PROVIDER_virtual/libg2d              ?= "imx-gpu-g2d"
+PREFERRED_PROVIDER_virtual/libg2d:imxdpu       ?= "imx-dpu-g2d"
 PREFERRED_PROVIDER_virtual/libg2d:mx93-nxp-bsp ?= "imx-pxp-g2d"
-PREFERRED_PROVIDER_opencl-clhpp:imxgpu       ?= "imx-gpu-viv"
-PREFERRED_PROVIDER_opencl-headers:imxgpu     ?= "imx-gpu-viv"
-PREFERRED_PROVIDER_opencl-icd-loader:imxgpu  ?= "imx-gpu-viv"
-PREFERRED_PROVIDER_virtual/opencl-icd:imxgpu ?= "imx-gpu-viv"
 
-PREFERRED_VERSION_weston:imx-nxp-bsp      ??= "12.0.3.imx"
+PREFERRED_VERSION_weston:imx-nxp-bsp      ??= "14.0.2.imx"
 # i.MX 6 & 7 stay on weston 10.0 for fbdev
 PREFERRED_VERSION_weston:mx6-nxp-bsp      ??= "10.0.5.imx"
 PREFERRED_VERSION_weston:mx7-nxp-bsp      ??= "10.0.5.imx"
 PREFERRED_VERSION_weston:imx-mainline-bsp   = ""
 
-PREFERRED_VERSION_wayland-protocols:mx6-nxp-bsp  ??= "1.32.imx"
-PREFERRED_VERSION_wayland-protocols:mx7-nxp-bsp  ??= "1.32.imx"
-PREFERRED_VERSION_wayland-protocols:mx8-nxp-bsp  ??= "1.32.imx"
-PREFERRED_VERSION_wayland-protocols:mx9-nxp-bsp  ??= "1.32.imx"
+PREFERRED_VERSION_wayland-protocols:imx-nxp-bsp  ??= "1.41.imx"
 
-PREFERRED_VERSION_xwayland:imx-nxp-bsp ??= "23.1.1.imx"
+PREFERRED_VERSION_xwayland:imx-nxp-bsp ??= "24.1.6.imx"
 
 # Use i.MX libdrm Version
-PREFERRED_VERSION_libdrm:mx6-nxp-bsp ??= "2.4.116.imx"
-PREFERRED_VERSION_libdrm:mx7-nxp-bsp ??= "2.4.116.imx"
-PREFERRED_VERSION_libdrm:mx8-nxp-bsp ??= "2.4.116.imx"
-PREFERRED_VERSION_libdrm:mx9-nxp-bsp ??= "2.4.116.imx"
+PREFERRED_VERSION_libdrm:imx-nxp-bsp ??= "2.4.123.imx"
 
-PREFERRED_VERSION_spirv-headers:imxvulkan            ??= "1.3.261.1.imx"
-PREFERRED_VERSION_spirv-tools:imxvulkan              ??= "1.3.261.1.imx"
-PREFERRED_VERSION_vulkan-headers:imxvulkan           ??= "1.3.261.1.imx"
-PREFERRED_VERSION_vulkan-loader:imxvulkan            ??= "1.3.261.1.imx"
-PREFERRED_VERSION_vulkan-tools:imxvulkan             ??= "1.3.261.1.imx"
-PREFERRED_VERSION_vulkan-validation-layers:imxvulkan ??= "1.3.261.1.imx"
+PREFERRED_VERSION_glslang:imxvulkan                  ??= "1.3.275.0.imx"
+PREFERRED_VERSION_spirv-headers:imxvulkan            ??= "1.3.275.0.imx"
+PREFERRED_VERSION_spirv-tools:imxvulkan              ??= "1.3.275.0.imx"
+PREFERRED_VERSION_vulkan-headers:imxvulkan           ??= "1.3.275.0.imx"
+PREFERRED_VERSION_vulkan-loader:imxvulkan            ??= "1.3.275.0.imx"
+PREFERRED_VERSION_vulkan-tools:imxvulkan             ??= "1.3.275.0.imx"
+PREFERRED_VERSION_vulkan-utility-libraries:imxvulkan ??= "1.3.275.0.imx"
+PREFERRED_VERSION_vulkan-validation-layers:imxvulkan ??= "1.3.275.0.imx"
 
 # Use i.MX optee Version
-PREFERRED_VERSION_optee-os:mx8-nxp-bsp     ??= "4.0.0.imx"
-PREFERRED_VERSION_optee-os:mx9-nxp-bsp     ??= "4.0.0.imx"
-PREFERRED_VERSION_optee-client:mx8-nxp-bsp ??= "4.0.0.imx"
-PREFERRED_VERSION_optee-client:mx9-nxp-bsp ??= "4.0.0.imx"
-PREFERRED_VERSION_optee-test:mx8-nxp-bsp   ??= "4.0.0.imx"
-PREFERRED_VERSION_optee-test:mx9-nxp-bsp   ??= "4.0.0.imx"
+PREFERRED_VERSION_optee-os:imx-nxp-bsp     ??= "4.6.0.imx"
+PREFERRED_VERSION_optee-client:imx-nxp-bsp ??= "4.6.0.imx"
+PREFERRED_VERSION_optee-test:imx-nxp-bsp   ??= "4.6.0.imx"
+PREFERRED_VERSION_optee-os-tadevkit:imx-nxp-bsp   ??= "4.6.0.imx"
 
 # Use i.MX opencv Version
 PREFERRED_VERSION_opencv:mx8-nxp-bsp ??= "4.6.0.imx"
 PREFERRED_VERSION_opencv:mx9-nxp-bsp ??= "4.6.0.imx"
 
 # Handle default kernel
-IMX_DEFAULT_KERNEL:imx-mainline-bsp = "linux-fslc"
-IMX_DEFAULT_KERNEL:imx-nxp-bsp      = "linux-fslc-imx"
+IMX_DEFAULT_KERNEL:imx-mainline-bsp ??= "linux-fslc"
+IMX_DEFAULT_KERNEL:imx-nxp-bsp      ??= "linux-fslc-imx"
 
 PREFERRED_PROVIDER_virtual/kernel ??= "${IMX_DEFAULT_KERNEL}"
 
@@ -625,7 +630,7 @@ IMAGE_FSTYPES ?= "${SOC_DEFAULT_IMAGE_FSTYPES}"
 
 IMAGE_BOOT_FILES ?= " \
     ${KERNEL_IMAGETYPE} \
-    ${@make_dtb_boot_files(d)} \
+    ${@bb.utils.contains('KERNEL_IMAGETYPE', 'fitImage', '', '${@make_dtb_boot_files(d)}', d)} \
     ${@bb.utils.contains('MACHINE_FEATURES', 'optee', '${OPTEE_BOOT_IMAGE}', '', d)} \
 "
 
@@ -659,9 +664,9 @@ WKS_FILE_DEPENDS:append:imx-generic-bsp:mx9-generic-bsp = " \
     ${@oe.utils.ifelse(d.getVar('UBOOT_PROVIDES_BOOT_CONTAINER') == '0', 'imx-boot', '')} \
 "
 
-SOC_DEFAULT_WKS_FILE ?= "imx-uboot-bootpart.wks.in"
-SOC_DEFAULT_WKS_FILE:mx8-generic-bsp ?= "imx-imx-boot-bootpart.wks.in"
+SOC_DEFAULT_WKS_FILE                 ?= "imx-uboot-bootpart.wks.in"
 SOC_DEFAULT_WKS_FILE:mxs-generic-bsp ?= "imx-uboot-mxs-bootpart.wks.in"
+SOC_DEFAULT_WKS_FILE:mx8-generic-bsp ?= "imx-imx-boot-bootpart.wks.in"
 SOC_DEFAULT_WKS_FILE:mx9-generic-bsp ?= "imx-imx-boot-bootpart.wks.in"
 
 WKS_FILE ?= "${SOC_DEFAULT_WKS_FILE}"

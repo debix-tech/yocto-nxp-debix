@@ -13,7 +13,7 @@ PE = "1"
 PV = "5.9+${SRCPV}"
 
 SRC_URI = "git://github.com/nxp-imx/imx-lib.git;protocol=https;branch=${SRCBRANCH}"
-SRCBRANCH = "lf-6.6.3_1.0.0"
+SRCBRANCH = "lf-6.12.20_2.0.0"
 SRCREV = "8f124c3914d82019849fb697baeb730e4cb1b547"
 
 S = "${WORKDIR}/git"
@@ -32,7 +32,7 @@ PLATFORM:mx7ulp-nxp-bsp = "IMX7"
 PLATFORM:mx8ulp-nxp-bsp = "IMX8ULP"
 PLATFORM:mx9-nxp-bsp    = "IMX8ULP"
 
-PARALLEL_MAKE="-j 1"
+PARALLEL_MAKE = "-j 1"
 EXTRA_OEMAKE = ""
 
 do_compile () {

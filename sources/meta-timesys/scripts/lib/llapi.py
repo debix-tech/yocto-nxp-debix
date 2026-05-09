@@ -1,4 +1,5 @@
 # Copyright (C) 2018 Timesys Corporation
+# Copyright (C) 2025 Lynx Software Technologies, Inc. All rights reserved.
 
 import base64
 import hashlib
@@ -14,11 +15,11 @@ import urllib.error
 from collections import OrderedDict
 
 
-vigiles_url_default = 'https://linuxlink.timesys.com'
+vigiles_url_default = 'https://vigiles.lynx.com'
 vigiles_url_env = os.getenv('LINUXLINK_SERVER')
 VigilesURL = vigiles_url_env if vigiles_url_env else vigiles_url_default
-VigilesSupportURL = 'https://linuxlink.timesys.com/support'
-VigilesInfoURL = 'https://www.timesys.com/security/vulnerability-patch-notification/'
+VigilesSupportURL = 'https://vigiles.lynx.com/support'
+VigilesInfoURL = 'https://www.lynx.com/solutions/vulnerability-mitigation-management'
 VigilesApiMaxRetries = 5
 VigilesApiRetryTimeout = 5
 
@@ -77,7 +78,7 @@ def read_dashboard_config(config_file):
 
 
 def api_error_message(reason: str, param: str = '', extra: str = ''):
-    from datetime import datetime
+    from datetime import datetime, timezone
 
     err_dict = {
         '400': 'The Vigiles request was empty or insufficient.',
@@ -97,7 +98,7 @@ def api_error_message(reason: str, param: str = '', extra: str = ''):
         '',
         '%s' % ':\t'.join(['Vigiles Communication Error', err_dict.get(reason, reason)]),
         '',
-        '%s' % ':\t'.join(['Current Time', datetime.utcnow().isoformat()]),
+        '%s' % ':\t'.join(['Current Time', datetime.now(timezone.utc).isoformat()]),
         '%s' % ':\t'.join(['Message', extra]),
         '%s' % ':\t'.join(['Parameter(s)', param]),
         '',

@@ -8,10 +8,10 @@ DEPENDS = " \
 "
 
 # Specify the first two important SRCREVs as the format
-SRCREV_FORMAT="compose_survey"
-SRCREV_compose = "3371227794f5f3645f4f19829c60a741635ed329"
+SRCREV_FORMAT = "compose_survey"
+SRCREV_compose = "eaf9800948e022573997649656c040a19d4b15c2"
 
-SRC_URI = "git://github.com/docker/compose;name=compose;branch=main;protocol=https"
+SRC_URI = "git://github.com/docker/compose;name=compose;branch=main;protocol=https;destsuffix=${GO_SRCURI_DESTSUFFIX}"
 
 include src_uri.inc
 
@@ -23,7 +23,7 @@ LIC_FILES_CHKSUM = "file://src/import/LICENSE;md5=175792518e4ac015ab6696d16c4f60
 
 GO_IMPORT = "import"
 
-PV = "v2.26.0"
+PV = "v2.33.1"
 
 COMPOSE_PKG = "github.com/docker/compose/v2"
 
@@ -55,7 +55,7 @@ do_compile() {
 	# our copied .go files are to be used for the build
 	ln -sf vendor.copy vendor
 	# inform go that we know what we are doing
-	cp ${WORKDIR}/modules.txt vendor/
+	cp ${UNPACKDIR}/modules.txt vendor/
 
 	GO_LDFLAGS="-s -w -X internal.Version=${PV} -X ${COMPOSE_PKG}/internal.Version=${PV}"
 	GO_BUILDTAGS=""
@@ -78,3 +78,7 @@ FILES:${PN} += " ${nonarch_libdir}/docker/cli-plugins/"
 
 INHIBIT_PACKAGE_STRIP = "1"
 INSANE_SKIP:${PN} += "ldflags already-stripped"
+
+# the AWS dependency is 8GB, try and control the
+# size of the clones
+BB_GIT_SHALLOW = "1"

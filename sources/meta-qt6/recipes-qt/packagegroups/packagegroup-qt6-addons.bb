@@ -8,6 +8,7 @@ inherit packagegroup
 PACKAGEGROUP_DISABLE_COMPLEMENTARY = "1"
 
 RDEPENDS:${PN} += " \
+    ${@bb.utils.contains('BBFILE_COLLECTIONS', 'clang-layer', 'python3-pyside6', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'opengl', 'qt3d', '', d)} \
     qt5compat \
     qtapplicationmanager \
@@ -50,25 +51,25 @@ RDEPENDS:${PN} += " \
 
 RDEPENDS:${PN}:append:aarch64 = "\
     qtquick3dphysics \
-    qtpdf \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'opengl', 'qtpdf', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'webengine', 'qtwebengine qtwebview', '', d)} \
 "
 RDEPENDS:${PN}:append:arm = " qtquick3dphysics"
 RDEPENDS:${PN}:append:armv6 = "\
-    qtpdf \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'opengl', 'qtpdf', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'webengine', 'qtwebengine qtwebview', '', d)} \
 "
 RDEPENDS:${PN}:append:armv7a = "\
-    qtpdf \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'opengl', 'qtpdf', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'webengine', 'qtwebengine qtwebview', '', d)} \
 "
 RDEPENDS:${PN}:append:armv7ve = "\
-    qtpdf \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'opengl', 'qtpdf', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'webengine', 'qtwebengine qtwebview', '', d)} \
 "
 RDEPENDS:${PN}:append:x86 = " qtquick3dphysics"
 RDEPENDS:${PN}:append:x86-64 = "\
     qtquick3dphysics \
-    qtpdf \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'opengl', 'qtpdf', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'webengine', 'qtwebengine qtwebview', '', d)} \
 "

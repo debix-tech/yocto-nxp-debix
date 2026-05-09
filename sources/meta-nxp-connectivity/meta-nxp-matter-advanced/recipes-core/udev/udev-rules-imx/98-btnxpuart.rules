@@ -1,0 +1,1 @@
+ACTION=="change", ENV{BTNXPUART_DEV}=="*", ENV{BTNXPUART_STATE}=="*", RUN+="/etc/udev/scripts/btnxpuart.sh $env{BTNXPUART_DEV} $env{BTNXPUART_STATE}"

@@ -1,0 +1,27 @@
+From 609d4f6a28f5ecadb2265da2372354eaa14e505a Mon Sep 17 00:00:00 2001
+From: Haoran Wang <elven.wang@nxp.com>
+Date: Thu, 21 Nov 2024 18:57:53 +0800
+Subject: [PATCH] fix imx build error
+
+Signed-off-by: Haoran Wang <elven.wang@nxp.com>
+---
+ platform/NCP_HOST/cmake/NxpZbNcpHostConfig.cmake | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+Upstream-Status: Inappropriate  [platform specific changes]
+
+diff --git a/platform/NCP_HOST/cmake/NxpZbNcpHostConfig.cmake b/platform/NCP_HOST/cmake/NxpZbNcpHostConfig.cmake
+index 5bbac18..548b476 100644
+--- a/platform/NCP_HOST/cmake/NxpZbNcpHostConfig.cmake
++++ b/platform/NCP_HOST/cmake/NxpZbNcpHostConfig.cmake
+@@ -219,5 +219,4 @@ endif()
+ # Additional compile options on non-application sources
+ set_property(SOURCE ${ZB_NCP_HOST_SOURCES} APPEND PROPERTY COMPILE_OPTIONS -Wno-int-to-pointer-cast)
+ set_property(SOURCE ${ZB_NCP_HOST_SOURCES} APPEND PROPERTY COMPILE_OPTIONS -Wno-pointer-to-int-cast)
+-set_property(SOURCE ${ZB_NCP_HOST_SOURCES} APPEND PROPERTY COMPILE_OPTIONS -Wno-format)
+-set_property(SOURCE ${ZB_NCP_HOST_SOURCES} APPEND PROPERTY COMPILE_OPTIONS -Wno-stringop-overread)
+\ No newline at end of file
++set_property(SOURCE ${ZB_NCP_HOST_SOURCES} APPEND PROPERTY COMPILE_OPTIONS -Wno-stringop-overread)
+-- 
+2.34.1
+

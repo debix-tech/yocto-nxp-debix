@@ -21,17 +21,29 @@ def kernel_cache_cond_feature(src_uri,feature):
     if kernel_cache:
        return feature
 
-    return "../recipe-sysroot-native/kcfg/" + feature
+    return "../../recipe-sysroot-native/kcfg/" + feature
 
 # no conditional, just use the yocto-kernel-cache addition, yes
 # the src_uri isn't used, but we may need to check it in the future
 def kernel_cache_feature(src_uri,feature):
-    return "../recipe-sysroot-native/kcfg/" + feature
+    return "../../recipe-sysroot-native/kcfg/" + feature
 
 def distro_cond_feature(feature_fragment,distro_feature,d):
     import bb
     feat = kernel_cache_feature("",feature_fragment)
     return bb.utils.contains('DISTRO_FEATURES', distro_feature, ' ' + feat, ' ', d)
+
+# kept as a reference if we go back to a dynamically calculated
+# fragment dependency.
+def kernel_meta_ver_depends(d):
+    yocto_enabled = bb.data.inherits_class('kernel-yocto', d)
+    if yocto_enabled:
+        pv = oe.utils.trim_version(d.getVar('PV'), 2)
+        return "yocto-cfg-fragments-%s-native:do_populate_sysroot" % pv
+    else:
+        return ""
+
+KERNEL_CFG_DEPENDS ?= "${@['', 'yocto-cfg-fragments-${LINUX_MAJOR}.${LINUX_MINOR}-native:do_populate_sysroot'][(bb.data.inherits_class('kernel-yocto', d))]}"
 
 KERNEL_CACHE_FEATURES ?= "${@kernel_cache_feature(d.getVar('SRC_URI'),'cfg/virtio.scc')} \
                           ${@kernel_cache_feature(d.getVar('SRC_URI'),'cfg/xt-checksum.scc')} \
@@ -47,7 +59,13 @@ KERNEL_FEATURES:append = " ${KERNEL_CACHE_FEATURES}"
 # fragment merging suport at the moment, then add a dependency on the
 # configuration fragment repository. This allows us to be sure that our
 # features can be enabled via the fragments
-do_kernel_metadata[depends] += "${@['', 'yocto-cfg-fragments-native:do_populate_sysroot'][(bb.data.inherits_class('kernel-yocto', d))]}"
+do_kernel_metadata[depends] += "${KERNEL_CFG_DEPENDS}"
+
+# if externalsrc is enabled, do_kernel_metadata dependency on
+# yocto-cfg-fragments-native won't be run to populate
+# recipe-sysroot-native/kcfg because do_patch is not run.  Manully add
+# the dependency to do_kernel_configme for this special case
+do_kernel_configme[depends] += "${@['', d.getVar('PN') + ':do_kernel_metadata'][(bb.data.inherits_class('externalsrc', d))]}"
 
 # xen kernel support
 # SRC_URI += "${@bb.utils.contains('DISTRO_FEATURES', 'xen', ' file://xen.scc', '', d)}"
@@ -59,3 +77,5 @@ KERNEL_FEATURES:append = "${@distro_cond_feature('cfg/xen.scc', 'xen', d )}"
 KERNEL_FEATURES:append = "${@distro_cond_feature('cfg/kubernetes.scc', 'k8s', d )}"
 KERNEL_FEATURES:append = "${@distro_cond_feature('cfg/kubernetes.scc', 'k3s', d )}"
 
+# selinux
+KERNEL_FEATURES:append = "${@distro_cond_feature('cgl/features/selinux/selinux.cfg', 'selinux', d )}"

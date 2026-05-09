@@ -1,0 +1,21 @@
+Upstream-Status: Inappropriate  [platform specific changes]
+
+diff --git a/src/gatt-database.c b/src/gatt-database.c
+index 6c84b085c..80977f81d 100644
+--- a/src/gatt-database.c
++++ b/src/gatt-database.c
+@@ -2607,8 +2607,12 @@ static bool sock_io_read(struct io *io, void *user_data)
+ 	if (bytes_read <= 0)
+ 		return false;
+ 
+-	gatt_notify_cb(chrc->attrib, chrc->ccc, buf, bytes_read, client->att,
+-				client->chrc->service->app->database);
++	send_notification_to_devices(chrc->service->app->database,
++				gatt_db_attribute_get_handle(chrc->attrib),
++				buf, bytes_read,
++				gatt_db_attribute_get_handle(chrc->ccc),
++				conf_cb,
++				chrc->proxy);
+ 
+ 	return true;
+ }

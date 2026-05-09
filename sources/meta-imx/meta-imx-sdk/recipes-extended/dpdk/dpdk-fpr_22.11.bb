@@ -7,8 +7,9 @@ DEPENDS = "dpdk"
 
 SRC_URI = "${DPDK_FPR_SRC};branch=${SRCBRANCH}"
 DPDK_FPR_SRC ?= "git://github.com/nxp/dpdk-fpr;protocol=https"
+
 SRCBRANCH = "main"
-SRCREV = "4be3498dd4e816785129e3a49d52270410548dc6"
+SRCREV = "4fe459c52971230bd6bd6247f7904dfc50f6d634"
 
 S = "${WORKDIR}/git"
 
@@ -18,11 +19,11 @@ do_install() {
     install -d ${D}${sysconfdir}/dpdk-fpr
     install -d ${D}${bindir}
     install -m 0644 ${S}/nxp/*.txt ${D}${sysconfdir}/dpdk-fpr/
-    install -m 0644 ${S}/nxp/fpr.conf ${D}${sysconfdir}/dpdk-fpr/
+    install -m 0644 ${S}/nxp/fpr*.conf ${D}${sysconfdir}/dpdk-fpr/
     install -m 0755 ${S}/nxp/up ${D}${sysconfdir}/dpdk-fpr/
     install -m 0755 ${S}/app/dpdk-fpr ${D}${bindir}/
 }
 
 RDEPENDS:${PN} += " socat kernel-module-dpdk-extras"
 
-COMPATIBLE_MACHINE = "(mx95-nxp-bsp)"
+COMPATIBLE_MACHINE = "(mx93-nxp-bsp|mx943-nxp-bsp|mx95-nxp-bsp)"

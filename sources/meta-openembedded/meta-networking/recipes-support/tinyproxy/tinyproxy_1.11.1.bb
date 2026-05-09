@@ -8,6 +8,7 @@ SRC_URI = "https://github.com/${BPN}/${BPN}/releases/download/${PV}/${BP}.tar.gz
            file://tinyproxy.service \
            file://tinyproxy.conf \
            file://CVE-2022-40468.patch \
+           file://0001-CVE-2023-49606.patch \
            "
 
 SRC_URI[sha256sum] = "1574acf7ba83c703a89e98bb2758a4ed9fda456f092624b33cfcf0ce2d3b2047"
@@ -36,7 +37,7 @@ SYSTEMD_AUTO_ENABLE:${PN} = "enable"
 do_install:append() {
 	if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
 		install -d ${D}${systemd_system_unitdir}
-		install -m 0644 ${WORKDIR}/tinyproxy.service ${D}${systemd_system_unitdir}
+		install -m 0644 ${UNPACKDIR}/tinyproxy.service ${D}${systemd_system_unitdir}
 	fi
-	install -m 0644 ${WORKDIR}/tinyproxy.conf ${D}${sysconfdir}/tinyproxy.conf
+	install -m 0644 ${UNPACKDIR}/tinyproxy.conf ${D}${sysconfdir}/tinyproxy.conf
 }

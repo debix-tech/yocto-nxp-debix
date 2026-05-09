@@ -3,7 +3,7 @@
 # classes/tsmeta.bbclass - Metadata Collection
 #
 # Copyright (C) 2019 Timesys Corporation
-#
+# Copyright (C) 2025 Lynx Software Technologies, Inc. All rights reserved.
 #
 # This source is released under the MIT License.
 #
@@ -27,6 +27,7 @@ tsmeta_machine_dir = "${tsmeta_dir}/machine"
 tsmeta_preferred_dir = "${tsmeta_dir}/preferred"
 tsmeta_build_deps_dir = "${tsmeta_dir}/build_deps"
 tsmeta_runtime_deps_dir = "${tsmeta_dir}/runtime_deps"
+tsmeta_vulnerabilities_dir = "${tsmeta_dir}/vulnerabilities"
 
 tsmeta_lvars_pkg = " \
     ALTERNATIVE     \
@@ -107,8 +108,12 @@ def tsmeta_read_json(d, trj_path):
     import json
     dict_in = dict()
     if os.path.exists(trj_path):
-        with open(trj_path) as f:
-            dict_in = json.load(f)
+        lock = bb.utils.lockfile(trj_path + ".lock")
+        try:
+            with open(trj_path) as f:
+                dict_in = json.load(f)
+        finally:
+            bb.utils.unlockfile(lock)
     return dict_in
 
 def tsmeta_write_json(d, dict_out, twj_path):
@@ -116,8 +121,12 @@ def tsmeta_write_json(d, dict_out, twj_path):
 
     s = json.dumps(dict_out, indent=8, sort_keys=False)
     if twj_path:
-        with open(twj_path, "w") as f:
-            f.write(s)
+        lock = bb.utils.lockfile(twj_path + ".lock")
+        try:
+            with open(twj_path, "w") as f:
+                f.write(s)
+        finally:
+            bb.utils.unlockfile(lock)
 
 
 def tsmeta_write_dictname(d, tsm_type, twd_name, twd_dict):
@@ -330,6 +339,13 @@ def _get_cve_version(d):
         uri_type = 'git' if ('git' in pv or 'AUTOINC' in pv) else ''
         (bpv, pfx, sfx) = oe.get_recipe_pv_with_pfx_sfx(pv, uri_type)
         cve_v = bpv
+    
+    if isinstance(cve_v, str):
+        # Remove +git extension from version string
+        cve_v = cve_v.split("+git")[0]
+        
+        # For patchlevel versions like 6.1+20181013
+        cve_v = cve_v.replace("+", ".")
     return cve_v
 
 

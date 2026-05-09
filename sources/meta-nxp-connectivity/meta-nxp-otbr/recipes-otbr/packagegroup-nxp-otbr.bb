@@ -1,4 +1,4 @@
-# Copyright (C) 2024 NXP
+# Copyright (C) 2025 NXP
 # Released under the MIT license (see COPYING.MIT for the terms)
 
 DESCRIPTION = "Add packages for i.MX Matter baseline components"
@@ -7,6 +7,6 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda
 
 inherit packagegroup
 
-RDEPENDS:${PN} += "${@bb.utils.contains_any('MACHINE', "imx6ullevk imx8ulpevk ", ' otbr tayga ', '', d)}"
-RDEPENDS:${PN} += "${@bb.utils.contains('MACHINE', "imx8mmevk-matter", ' otbr tayga otbr-iwxxx-spi ', '', d)}"
-RDEPENDS:${PN} += "${@bb.utils.contains('MACHINE', "imx93evk-iwxxx-matter", ' otbr-iwxxx-spi ', '', d)}"
+RDEPENDS:${PN} += " otbr tayga "
+RDEPENDS:${PN} += "${@bb.utils.contains('MACHINE_FEATURES', 'has-iwxxx', ' otbr-iwxxx ', '', d)}"
+

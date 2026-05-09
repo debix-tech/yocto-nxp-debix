@@ -20,13 +20,15 @@ include recipes-qt/qt6/qt6.inc
 SRC_URI += " \
     ${QT_GIT}/playground/qlitehtml.git;name=qttools-qlitehtml;branch=master;protocol=${QT_GIT_PROTOCOL};destsuffix=git/src/assistant/qlitehtml \
     git://github.com/litehtml/litehtml.git;name=qttools-qlitehtml-litehtml;branch=master;destsuffix=git/src/assistant/qlitehtml/src/3rdparty/litehtml;protocol=https \
+    file://0002-examples-don-t-track-source-path.patch \
 "
 
 DEPENDS += "qtbase qtdeclarative qttools-native"
 
-PACKAGECONFIG:class-native = "${@bb.utils.contains('BBFILE_COLLECTIONS', 'clang-layer', 'clang', '', d)}"
-PACKAGECONFIG:class-nativesdk = "${@bb.utils.contains('BBFILE_COLLECTIONS', 'clang-layer', 'clang', '', d)}"
-PACKAGECONFIG:remove:mingw32 = "clang"
+QTTOOLS_USE_CLANG ?= "${@ 'clang' if bb.utils.vercmp_string_op(d.getVar('LLVMVERSION') or '', '17', '>') else ''}"
+PACKAGECONFIG:class-native = "${QTTOOLS_USE_CLANG}"
+PACKAGECONFIG:class-nativesdk = "${QTTOOLS_USE_CLANG}"
+PACKAGECONFIG:remove:mingw32 = "${QTTOOLS_USE_CLANG}"
 
 PACKAGECONFIG[clang] = "-DFEATURE_clang=ON,-DFEATURE_clang=OFF,clang"
 

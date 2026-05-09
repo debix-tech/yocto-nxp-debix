@@ -30,7 +30,7 @@ RPROVIDES:${PN} = "virtual-runc"
 
 GO_IMPORT = "import"
 
-LIBCONTAINER_PACKAGE="github.com/opencontainers/runc/libcontainer"
+LIBCONTAINER_PACKAGE = "github.com/opencontainers/runc/libcontainer"
 
 do_configure[noexec] = "1"
 
@@ -38,7 +38,7 @@ do_configure[noexec] = "1"
 DISTRO_BUILDTAGS ?= "${@bb.utils.contains('DISTRO_FEATURES', 'seccomp', 'seccomp', '', d)} \
                      ${@bb.utils.contains('DISTRO_FEATURES', 'selinux', 'selinux', '', d)}"
 
-EXTRA_OEMAKE="BUILDTAGS='${PACKAGECONFIG_CONFARGS} ${DISTRO_BUILDTAGS}' GO=${GO}"
+EXTRA_OEMAKE = "BUILDTAGS='${PACKAGECONFIG_CONFARGS} ${DISTRO_BUILDTAGS}' GO=${GO}"
 
 do_compile() {
 	# Set GOPATH. See 'PACKAGERS.md'. Don't rely on
@@ -79,5 +79,11 @@ do_install() {
 
 	cp ${S}/src/import/runc ${D}/${bindir}/runc
 	ln -sf runc ${D}/${bindir}/docker-runc
+
+	mkdir -p ${D}${datadir}/runc/
+	install -m 0755 ${S}/src/import/script/check-config.sh ${D}${datadir}/runc/
 }
 
+PACKAGES =+ "${PN}-check"
+FILES:${PN}-check += "${datadir}/runc/check-config.sh"
+RDEPENDS:${PN}-check += "bash"

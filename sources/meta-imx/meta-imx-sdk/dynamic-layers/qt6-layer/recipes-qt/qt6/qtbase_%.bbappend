@@ -2,12 +2,13 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 SRC_URI += "file://qt-linuxfb.sh"
 
-PACKAGECONFIG_GRAPHICS:imxdrm = "gbm kms"
-PACKAGECONFIG_GRAPHICS:imxpxp = "${PACKAGECONFIG_GRAPHICS_IMX_DRM}"
-PACKAGECONFIG_GRAPHICS_IMX_DRM        = ""
-PACKAGECONFIG_GRAPHICS_IMX_DRM:imxdrm = "gbm kms"
+PACKAGECONFIG_GRAPHICS_IMX_GPU:mx9-nxp-bsp = " \
+    gbm kms"
 
 PACKAGECONFIG_PLATFORM = "no-opengl linuxfb"
+
+PACKAGECONFIG_PLATFORM_EGLFS:mx9-nxp-bsp = " \
+    eglfs"
 
 PACKAGECONFIG_VULKAN_IMX_GPU:mx8mm-nxp-bsp = "vulkan"
 PACKAGECONFIG_VULKAN_IMX_GPU:mx9-nxp-bsp   = "vulkan"
@@ -25,6 +26,6 @@ QT_QPA_DEFAULT_EGLFS_INTEGRATION:imxgpu3d = \
 
 do_install:append () {
     if ! ${@bb.utils.contains('DISTRO_FEATURES', 'wayland', 'true', 'false', d)}; then
-        install -Dm 0755 ${WORKDIR}/qt-linuxfb.sh ${D}${sysconfdir}/profile.d/qt-linuxfb.sh
+        install -Dm 0755 ${UNPACKDIR}/qt-linuxfb.sh ${D}${sysconfdir}/profile.d/qt-linuxfb.sh
     fi
 }

@@ -14,6 +14,8 @@ Change-Id: Ibbab8b791f1177a1792f6e7c982548aa529769e6
  2 files changed, 10 insertions(+)
  create mode 100644 tools/gplay2/gplay_matter.service
 
+Upstream-Status: Inappropriate  [platform specific changes]
+
 diff --git a/tools/gplay2/gplay_matter.service b/tools/gplay2/gplay_matter.service
 new file mode 100644
 index 0000000..072dddc

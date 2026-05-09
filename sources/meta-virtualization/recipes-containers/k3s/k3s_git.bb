@@ -4,7 +4,7 @@ HOMEPAGE = "https://k3s.io/"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${S}/src/import/LICENSE;md5=2ee41112a44fe7014dce33e26468ba93"
 
-SRC_URI = "git://github.com/rancher/k3s.git;branch=release-1.28;name=k3s;protocol=https \
+SRC_URI = "git://github.com/rancher/k3s.git;branch=release-1.32;name=k3s;protocol=https;destsuffix=${GO_SRCURI_DESTSUFFIX} \
            file://k3s.service \
            file://k3s-agent.service \
            file://k3s-agent \
@@ -16,14 +16,14 @@ SRC_URI = "git://github.com/rancher/k3s.git;branch=release-1.28;name=k3s;protoco
           "
 
 SRC_URI[k3s.md5sum] = "363d3a08dc0b72ba6e6577964f6e94a5"
-SRCREV_k3s = "051b14b248655896fdfd7ba6c93db6182cde7431"
+SRCREV_k3s = "39f4cbb3367544477e9e678626c0add76e731624"
 
 SRCREV_FORMAT = "k3s_fuse"
-PV = "v1.28.7+k3s1+git${SRCREV_k3s}"
+PV = "v1.32.0-rc2+k3s1+git${SRCREV_k3s}"
 
 include src_uri.inc
 
-CNI_NETWORKING_FILES ?= "${WORKDIR}/cni-containerd-net.conf"
+CNI_NETWORKING_FILES ?= "${UNPACKDIR}/cni-containerd-net.conf"
 
 inherit go
 inherit goarch
@@ -74,7 +74,7 @@ do_compile() {
 	#
 	#         vendor/github.com/containerd/containerd/snapshots/btrfs/plugin/*.go
 
-        cp ${WORKDIR}/modules.txt vendor/
+        cp ${UNPACKDIR}/modules.txt vendor/
 
         VERSION_GOLANG="$(go version | cut -d" " -f3)"
         ${GO} build -trimpath -tags "$TAGS" -ldflags "-X github.com/k3s-io/k3s/pkg/version.UpstreamGolang=$VERSION_GOLANG  ${GO_BUILD_LDFLAGS} -w -s" -o ./dist/artifacts/k3s ./cmd/server/main.go
@@ -92,14 +92,14 @@ do_install() {
         # We want to use the containerd provided ctr
         # ln -sr "${D}/${BIN_PREFIX}/bin/k3s" "${D}${BIN_PREFIX}/bin/ctr"
         ln -sr "${D}/${BIN_PREFIX}/bin/k3s" "${D}${BIN_PREFIX}/bin/kubectl"
-        install -m 755 "${WORKDIR}/k3s-clean" "${D}${BIN_PREFIX}/bin"
-        install -m 755 "${WORKDIR}/k3s-killall.sh" "${D}${BIN_PREFIX}/bin"
+        install -m 755 "${UNPACKDIR}/k3s-clean" "${D}${BIN_PREFIX}/bin"
+        install -m 755 "${UNPACKDIR}/k3s-killall.sh" "${D}${BIN_PREFIX}/bin"
 
         if ${@bb.utils.contains('DISTRO_FEATURES','systemd','true','false',d)}; then
-                install -D -m 0644 "${WORKDIR}/k3s.service" "${D}${systemd_system_unitdir}/k3s.service"
-                install -D -m 0644 "${WORKDIR}/k3s-agent.service" "${D}${systemd_system_unitdir}/k3s-agent.service"
+                install -D -m 0644 "${UNPACKDIR}/k3s.service" "${D}${systemd_system_unitdir}/k3s.service"
+                install -D -m 0644 "${UNPACKDIR}/k3s-agent.service" "${D}${systemd_system_unitdir}/k3s-agent.service"
                 sed -i "s#\(Exec\)\(.*\)=\(.*\)\(k3s\)#\1\2=${BIN_PREFIX}/bin/\4#g" "${D}${systemd_system_unitdir}/k3s.service" "${D}${systemd_system_unitdir}/k3s-agent.service"
-                install -m 755 "${WORKDIR}/k3s-agent" "${D}${BIN_PREFIX}/bin"
+                install -m 755 "${UNPACKDIR}/k3s-agent" "${D}${BIN_PREFIX}/bin"
         fi
 
 	mkdir -p ${D}${datadir}/k3s/

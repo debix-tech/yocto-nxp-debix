@@ -9,16 +9,24 @@ DEPENDS = "gcc-arm-none-eabi-native"
 SRC_URI = "${IMX_OEI_SRC};branch=${SRCBRANCH}"
 IMX_OEI_SRC ?= "git://github.com/nxp-imx/imx-oei.git;protocol=https"
 SRCBRANCH = "master"
-SRCREV = "5fca9f47544d03c52ca371eadfffbfd2454e6925"
+SRCREV = "49bfaa93e9d1fe213866bcb9507927a59a9ede5a"
 
 S = "${WORKDIR}/git"
 
 inherit deploy
 
-OEI_CONFIGS ?= "UNDEFINED"
+PACKAGECONFIG ??= " \
+    ${@bb.utils.contains('UBOOT_CONFIG', 'sd-ecc', 'ecc', '', d)}"
+
+PACKAGECONFIG[ecc] = ""
+PACKAGECONFIG[tcm] = ""
+
+PACKAGE_ARCH = "${MACHINE_ARCH}"
+
 OEI_CORE    ?= "UNDEFINED"
 OEI_SOC     ?= "UNDEFINED"
 OEI_BOARD   ?= "UNDEFINED"
+OEI_CONFIGS ?= "ddr ${@bb.utils.filter('PACKAGECONFIG', 'tcm', d)}"
 
 LDFLAGS[unexport] = "1"
 
@@ -27,15 +35,27 @@ EXTRA_OEMAKE = "\
     DEBUG=1 \
     OEI_CROSS_COMPILE=arm-none-eabi-"
 
+EXTRA_OEMAKE:append:mx95-nxp-bsp = " r=${IMX_SOC_REV}"
+
 do_configure() {
+    if [ "${@bb.utils.filter('PACKAGECONFIG', 'ecc', d)}" ]; then
+        ddr_config=${OEI_DDR_CONFIG_ECC}
+    else
+        ddr_config=${OEI_DDR_CONFIG}
+    fi
     for oei_config in ${OEI_CONFIGS}; do
-        oe_runmake clean oei=$oei_config
+        oe_runmake clean oei=$oei_config DDR_CONFIG=$ddr_config
     done
 }
 
 do_compile() {
+    if [ "${@bb.utils.filter('PACKAGECONFIG', 'ecc', d)}" ]; then
+        ddr_config=${OEI_DDR_CONFIG_ECC}
+    else
+        ddr_config=${OEI_DDR_CONFIG}
+    fi
     for oei_config in ${OEI_CONFIGS}; do
-        oe_runmake oei=$oei_config
+        oe_runmake oei=$oei_config DDR_CONFIG=$ddr_config
     done
 }
 
@@ -54,4 +74,6 @@ do_deploy() {
 FILES:${PN} = "/firmware"
 SYSROOT_DIRS += "/firmware"
 
-COMPATIBLE_MACHINE = "(mx95-generic-bsp)"
+PROVIDES += "virtual/imx-oei"
+
+COMPATIBLE_MACHINE = "(mx95-generic-bsp|mx943-generic-bsp)"
