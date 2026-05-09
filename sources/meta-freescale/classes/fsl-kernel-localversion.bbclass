@@ -39,8 +39,9 @@ do_kernel_localversion() {
 		patches=`git --git-dir=${S}/.git rev-list --count $head..HEAD 2> /dev/null`
 		printf "%s%s%s%s" +g $head +p $patches > ${S}/.scmversion
 
-		sed -i -e "/CONFIG_LOCALVERSION_AUTO[ =]/d" ${B}/.config
-		echo "CONFIG_LOCALVERSION_AUTO=y" >> ${B}/.config
+		# John_gao no use scmversion
+		# sed -i -e "/CONFIG_LOCALVERSION_AUTO[ =]/d" ${B}/.config
+		# echo "CONFIG_LOCALVERSION_AUTO=y" >> ${B}/.config
 	fi
 }
 

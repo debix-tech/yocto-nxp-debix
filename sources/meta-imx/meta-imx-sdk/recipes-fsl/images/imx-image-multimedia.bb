@@ -65,3 +65,12 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     ${DOCKER} \
     ${G2D_SAMPLES} \
 "
+
+# Debix John_gao add tools
+IMAGE_INSTALL += " \
+	debix-custom \
+	htpdate \
+	ppp \
+	htop \
+	stress-ng \
+"

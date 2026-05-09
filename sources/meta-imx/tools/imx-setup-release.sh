@@ -153,6 +153,15 @@ echo "# Switch to Debian packaging and include package-management in the image" 
 echo "PACKAGE_CLASSES = \"package_deb\"" >> conf/local.conf
 echo "EXTRA_IMAGE_FEATURES += \"package-management\"" >> conf/local.conf
 
+### John_gao
+echo "BB_NUMBER_THREADS = \"16\"" >> conf/local.conf
+echo "IMAGE_FSTYPES = \"wic tar.bz2\"" >> conf/local.conf
+
+### John_gao set wic size
+echo "IMAGE_EXTRA_SPACE = \"1\"" >> conf/local.conf
+echo "IMAGE_OVERHEAD_FACTOR = \"1.0\""  >> conf/local.conf
+#echo "IMAGE_ROOTFS_SIZE = \"7000000\"" >> conf/local.conf
+
 if [ ! -e $BUILD_DIR/conf/bblayers.conf.org ]; then
     cp $BUILD_DIR/conf/bblayers.conf $BUILD_DIR/conf/bblayers.conf.org
 else

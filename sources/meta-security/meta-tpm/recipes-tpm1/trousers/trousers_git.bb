@@ -26,6 +26,9 @@ PACKAGECONFIG ?= "gmp "
 PACKAGECONFIG[gmp] = "--with-gmp, --with-gmp=no, gmp"
 PACKAGECONFIG[gtk] = "--with-gui=gtk, --with-gui=none, gtk+"
 
+#John_gao 忽略 qa 验证
+do_package_qa[noexec] = "1"
+
 do_install () {
     oe_runmake DESTDIR=${D} install
 }

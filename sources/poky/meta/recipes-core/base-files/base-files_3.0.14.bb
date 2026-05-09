@@ -68,7 +68,9 @@ conffiles = "${sysconfdir}/debian_version ${sysconfdir}/host.conf \
 #
 # The hostname can be changed outside of this recipe by using
 # hostname:pn-base-files = "my-host-name".
-hostname = "${MACHINE}"
+#hostname = "${MACHINE}"
+#John_gao chage hostname to Debix
+hostname = "Debix"
 
 BASEFILESISSUEINSTALL ?= "do_install_basefilesissue"
 
@@ -134,7 +136,9 @@ do_install_basefilesissue () {
 		printf "${DISTRO_NAME} " >> ${D}${sysconfdir}/issue
 		printf "${DISTRO_NAME} " >> ${D}${sysconfdir}/issue.net
 		if [ -n "${DISTRO_VERSION}" ]; then
-			distro_version_nodate="${@d.getVar('DISTRO_VERSION').replace('snapshot-${DATE}','snapshot').replace('${DATE}','')}"
+			#distro_version_nodate="${@d.getVar('DISTRO_VERSION').replace('snapshot-${DATE}','snapshot').replace('${DATE}','')}"
+			#John_gao  set version and date
+			distro_version_nodate="${DISTRO_VERSION}"
 			printf "%s " $distro_version_nodate >> ${D}${sysconfdir}/issue
 			printf "%s " $distro_version_nodate >> ${D}${sysconfdir}/issue.net
 		fi

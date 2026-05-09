@@ -7,6 +7,9 @@ SRC_URI = "${IMX_FIRMWARE_SRC};branch=${SRCBRANCH}"
 SRCBRANCH = "lf-6.12.49_2.2.0"
 SRCREV = "8c9b278016c97527b285f2fcbe53c2d428eb171d"
 
+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+SRC_URI += "file://0001-set-SD8987-drv_mode-1.patch"
+
 do_install() {
     install -d ${D}${nonarch_base_libdir}/firmware/nxp
     oe_runmake install INSTALLDIR=${D}${nonarch_base_libdir}/firmware/nxp

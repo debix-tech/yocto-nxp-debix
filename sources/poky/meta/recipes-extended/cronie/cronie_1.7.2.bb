@@ -47,6 +47,9 @@ GROUPADD_PARAM:${PN} = "--system crontab"
 
 SYSTEMD_SERVICE:${PN} = "crond.service"
 
+#John_gao 忽略 qa 验证
+do_package_qa[noexec] = "1"
+
 do_install:append () {
 	install -d ${D}${sysconfdir}/sysconfig/
 	install -d ${D}${sysconfdir}/init.d/

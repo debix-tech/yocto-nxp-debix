@@ -1,0 +1,10 @@
+#!/bin/bash
+
+echo 1 > /proc/sys/kernel/printk
+
+if [ -e /usr/local/polyhex/bin/polyhex_script ]
+then
+    /usr/local/polyhex/bin/polyhex_script &
+fi
+
+exit 0

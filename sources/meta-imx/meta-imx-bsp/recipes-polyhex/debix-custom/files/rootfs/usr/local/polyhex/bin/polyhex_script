@@ -1,0 +1,33 @@
+#!/bin/bash
+
+echo heartbeat > /sys/class/leds/LED1/trigger;echo heartbeat > /sys/class/leds/LED2/trigger
+
+#add mount to fstab
+BOOT_PATH=`mount | grep "on / type ext4" | awk '{print $1}'`
+if [ "$BOOT_PATH" == "/dev/mmcblk1p2" ] ; then
+mount /dev/mmcblk1p1 /boot
+else
+mount /dev/mmcblk0p1 /boot
+fi
+
+
+if [ -f "/usr/local/polyhex/expand_sd_rootfs.sh" ]; then
+        /usr/local/polyhex/expand_sd_rootfs.sh
+        mv /usr/local/polyhex/expand_sd_rootfs.sh /usr/local/polyhex/expand_sd_rootfs_bak.sh
+	### imx93 EMB 13 a1 no display
+	systemctl disable weston.service
+        reboot
+fi
+
+if [ -e "/usr/local/polyhex/gpsd.tar" ] ; then
+	tar xpf /usr/local/polyhex/gpsd.tar -C /.
+	rm /usr/local/polyhex/gpsd.tar
+fi
+
+# insmod wifi
+modprobe skw_sdio
+modprobe skw
+modprobe skwbt
+
+
+

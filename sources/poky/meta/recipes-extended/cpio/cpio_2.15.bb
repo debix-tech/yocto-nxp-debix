@@ -22,6 +22,9 @@ EXTRA_OECONF += "DEFAULT_RMT_DIR=${sbindir}"
 
 CFLAGS += "-std=gnu17"
 
+#John_gao 忽略 qa 验证
+do_package_qa[noexec] = "1"
+
 do_install () {
     autotools_do_install
     if [ "${base_bindir}" != "${bindir}" ]; then

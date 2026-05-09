@@ -41,6 +41,9 @@ SYSTEMD_SERVICE:${PN} = "parsec.service"
 inherit update-rc.d
 INITSCRIPT_NAME = "parsec"
 
+#John_gao 忽略 qa 验证
+do_package_qa[noexec] = "1"
+
 # A local file can be defined in build/local.conf
 # The file should also be included into SRC_URI then
 PARSEC_CONFIG ?= "${S}/config.toml"

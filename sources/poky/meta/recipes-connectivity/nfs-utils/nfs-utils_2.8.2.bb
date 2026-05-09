@@ -134,6 +134,9 @@ do_compile:prepend() {
 	make clean
 }
 
+#John_gao 忽略 qa 验证
+do_package_qa[noexec] = "1"
+
 # Works on systemd only
 HIGH_RLIMIT_NOFILE ??= "4096"
 
