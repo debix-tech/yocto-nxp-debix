@@ -73,8 +73,8 @@ $ DISTRO=<distro name> MACHINE=<machine name> source imx-setup-release.sh -b
  <build dir>
 
 eg.
-build debix imx93 emb 13 a1
-$ EULA=1 DISTRO=fsl-imx-xwayland MACHINE=imx93-emb-13-a1 source imx-setup-release.sh -b imx93
+build debix imx93 bmb 13 a1
+$ EULA=1 DISTRO=fsl-imx-xwayland MACHINE=imx93-bmb-13-a1 source imx-setup-release.sh -b imx93
 $ bitbake imx-image-full
 ```
 

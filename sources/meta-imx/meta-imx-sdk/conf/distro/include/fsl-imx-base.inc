@@ -2,7 +2,7 @@ require conf/distro/poky.conf
 
 DISTRO = "imx-nxp"
 #DISTRO_NAME = "NXP i.MX Release Distro"
-DISTRO_NAME = "i.MX93-EMB-13-A1 V1.01_20260508"
+DISTRO_NAME = "i.MX93-BMB-13-A1 V1.01_20260508"
 DISTRO_VERSION = "6.12-walnascar"
 DISTROOVERRIDES = "fsl"
 
