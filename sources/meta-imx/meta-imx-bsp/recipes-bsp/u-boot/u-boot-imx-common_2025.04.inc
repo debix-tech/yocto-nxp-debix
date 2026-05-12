@@ -15,7 +15,7 @@ SRC_URI = "${UBOOT_SRC};branch=${SRCBRANCH}"
 UBOOT_SRC ?= "git://github.com/debix-tech/uboot-nxp-debix;protocol=https"
 SRCBRANCH = "lf_v2025.04-yocto-L6.12.49-2.2.0-debix-bmb-13-a1"
 LOCALVERSION ?= "-${SRCBRANCH}"
-SRCREV = "4cf35bcdbb763d617f659be7caee0fc44d1ddc12"
+SRCREV = "999dc39324ffbd729e61b677e0f380a028f22c98"
 
 DEPENDS += " \
     bc-native \
