@@ -1,0 +1,25 @@
+From 69ed87dccb60593711d6647877a684209eaea85c Mon Sep 17 00:00:00 2001
+From: cloudesteem <rd@cloudesteem.cn>
+Date: Tue, 19 May 2026 06:47:56 +0000
+Subject: [PATCH]  Modify sdiw416 drv_mode=1
+Upstream-Status: Inappropriate [Path By Debix John_gao john@polyhex.net]
+
+---
+ wifi_mod_para.conf | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/wifi_mod_para.conf b/wifi_mod_para.conf
+index 294a7b7..efe6e01 100644
+--- a/wifi_mod_para.conf
++++ b/wifi_mod_para.conf
+@@ -104,6 +104,7 @@ SD9098_1 = {
+ 
+ SDIW416 = {
+ 	cal_data_cfg=none
++	drv_mode=1
+ }
+ 
+ SDIW610 = {
+-- 
+2.34.1
+

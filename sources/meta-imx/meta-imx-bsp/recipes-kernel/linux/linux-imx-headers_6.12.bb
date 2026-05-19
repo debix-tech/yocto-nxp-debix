@@ -19,7 +19,7 @@ SRC_URI = "${LINUX_IMX_SRC}"
 LINUX_IMX_SRC ?= "git://github.com/debix-tech/linux-nxp-debix.git;protocol=https;branch=${SRCBRANCH}"
 SRCBRANCH = "lf-6.12.49-2.2.0-yocto-bmb-13-a1"
 LOCALVERSION = ""
-SRCREV = "c7697e78d0cce66a3ec4ac91c416d59c62f61e32"
+SRCREV = "599f335c5ef51027bf90abc3643d4c5cf5cc71df"
 
 
 S = "${WORKDIR}/git"

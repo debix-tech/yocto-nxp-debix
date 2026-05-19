@@ -25,9 +25,10 @@ if [ -e "/usr/local/polyhex/gpsd.tar" ] ; then
 fi
 
 # insmod wifi
-modprobe skw_sdio
-modprobe skw
-modprobe skwbt
+#modprobe skw_sdio
+#modprobe skw
+#modprobe skwbt
+modprobe btnxpuart
 
 
 
