@@ -2,7 +2,7 @@ require conf/distro/poky.conf
 
 DISTRO = "imx-nxp"
 #DISTRO_NAME = "NXP i.MX Release Distro"
-DISTRO_NAME = "Debix-BMB-13-A1 V1.02_20260519"
+DISTRO_NAME = "Debix-BMB-13-A1 V1.03_20260615"
 DISTRO_VERSION = "6.12-walnascar"
 DISTROOVERRIDES = "fsl"
 

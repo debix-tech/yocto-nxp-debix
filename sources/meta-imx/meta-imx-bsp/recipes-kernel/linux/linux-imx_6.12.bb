@@ -30,7 +30,7 @@ LINUX_IMX_SRC ?= "git://github.com/debix-tech/linux-nxp-debix.git;protocol=https
 SRCBRANCH = "lf-6.12.49-2.2.0-yocto-bmb-13-a1"
 KBRANCH = "${SRCBRANCH}"
 LOCALVERSION = ""
-SRCREV = "599f335c5ef51027bf90abc3643d4c5cf5cc71df"
+SRCREV = "35df09880312584d7733b1c5311a3eb67b953bfe"
 
 
 # PV is defined in the base in linux-imx.inc file and uses the LINUX_VERSION definition
